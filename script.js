@@ -1,19 +1,53 @@
 /**
- * MT Model Intelligence Report — Arabic Localization
- * SaaS Dashboard Controller & Data Pipeline
+ * MT Model Intelligence Report — Two-Variant Strategy Matrix
+ * Language Bucket × Translation Profile × Engine Selection
  * 
- * NEW ARCHITECTURE:
- * Content Type -> Translation Profile -> Language Bucket -> Engine Selection
+ * ARCHITECTURE:
+ * 1. Content Type -> Translation Profile (Quality, Balanced, Speed)
+ * 2. Language Bucket -> Optimal Engine per Profile
+ * 3. Strategy Variant (A or B) determines profile tier assignments
  */
 
 // ==========================================================================
-// 1. ROUTING CONFIGURATION - NEW ARCHITECTURE
+// 1. LANGUAGE BUCKET OPTIMAL ENGINE DEFINITIONS (Model Exercise Results)
 // ==========================================================================
 
 /**
- * STEP 1: Content Type -> Translation Profile Mapping
+ * LANGUAGE BUCKET STRATEGY: Best models per bucket x profile
+ * Based on linguistic characteristics and model strengths
  */
-const CONTENT_TYPE_TO_PROFILE = {
+const LANGUAGE_BUCKET_ENGINES = {
+    "RTL": {
+        "Quality": { engine: "GPT-5.5 Pro", score: 85, rationale: "Superior RTL formatting, formal register handling" },
+        "Balanced": { engine: "GPT-5.5", score: 75, rationale: "Strong RTL coherence with good speed" },
+        "Speed": { engine: "GPT-5.4 Mini", score: 65, rationale: "Lightweight RTL processing, fast inference" }
+    },
+    "CJK": {
+        "Quality": { engine: "Gemini 3.1 Pro", score: 88, rationale: "Exceptional CJK/ideogram coverage, formal precision" },
+        "Balanced": { engine: "Gemini 3 Flash", score: 78, rationale: "Fast multi-lingual handling, good CJK coherence" },
+        "Speed": { engine: "Gemini 3.1 Flash Lite", score: 68, rationale: "Optimized for ideographic scripts, fast inference" }
+    },
+    "European": {
+        "Quality": { engine: "GPT-5.5 Pro", score: 82, rationale: "Superior grammar, formal register mastery" },
+        "Balanced": { engine: "Gemini 3.1 Pro", score: 76, rationale: "Multi-language support, coherent output" },
+        "Speed": { engine: "GPT-5.4", score: 62, rationale: "Balanced performance across European languages" }
+    },
+    "Others": {
+        "Quality": { engine: "GPT-5.5", score: 80, rationale: "Broader linguistic coverage for low-resource languages" },
+        "Balanced": { engine: "Gemini 3 Flash", score: 72, rationale: "Reliable fallback for regional variants" },
+        "Speed": { engine: "GPT-5.4 Mini", score: 60, rationale: "Fast, reasonable accuracy for edge cases" }
+    }
+};
+
+// ==========================================================================
+// 2. STRATEGY VARIANT DEFINITIONS
+// ==========================================================================
+
+/**
+ * STRATEGY VARIANT A: Standard Logic
+ * Quality profile: Legal, Medical, Patents, Formal domains
+ */
+const STRATEGY_VARIANT_A = {
     "General": "Balanced",
     "General Science": "Quality",
     "Heavy Machinery": "Quality",
@@ -30,25 +64,25 @@ const CONTENT_TYPE_TO_PROFILE = {
     "Medicine": "Quality",
     "Military & Defense": "Quality",
     "Mining & Petroleum": "Quality",
-    "Networks": "Quality",
+    "Networks": "Speed",
     "NGOs": "Balanced",
-    "Nursing": "Quality",
-    "Other": "Balanced",
+    "Nursing": "Balanced",
+    "Other": "Speed",
     "Patents": "Quality",
     "Patient Education": "Balanced",
     "Pharmaceuticals": "Quality",
-    "Physical Therapy": "Quality",
+    "Physical Therapy": "Balanced",
     "Publishing, Printing & Packaging": "Balanced",
     "Real Estate & Properties": "Balanced",
     "Religion & Religious Studies": "Balanced",
     "Security & International Affairs": "Quality",
     "Shipping & Maritime": "Quality",
     "Social & Human Services": "Balanced",
-    "Software UA": "Quality",
+    "Software UA": "Balanced",
     "Software UI": "Speed",
     "Sports": "Speed",
     "Technical & Scientific": "Quality",
-    "Telecommunications": "Quality",
+    "Telecommunications": "Speed",
     "Training & E-learning": "Balanced",
     "Transportation & Logistics": "Quality",
     "Veterinary Medicine": "Quality",
@@ -56,48 +90,20 @@ const CONTENT_TYPE_TO_PROFILE = {
 };
 
 /**
- * STEP 2: Language Bucket Definitions
- * Each bucket has mapped engines for each Translation Profile
+ * STRATEGY VARIANT B: Extended Quality Coverage
+ * Adds Nursing, Patient Education, Physical Therapy, Veterinary, Software UA to Quality
  */
-const LANGUAGE_BUCKETS = {
-    "RTL": {
-        "Quality": { engine: "GPT-5.5 Pro", score: 85 },
-        "Balanced": { engine: "GPT-5.5", score: 75 },
-        "Speed": { engine: "GPT-5.4 Mini", score: 65 }
-    },
-    "CJK": {
-        "Quality": { engine: "DeepSeek Premium", score: 88 },
-        "Balanced": { engine: "Gemini 3.1 Pro", score: 78 },
-        "Speed": { engine: "Gemini 3 Flash", score: 68 }
-    },
-    "European": {
-        "Quality": { engine: "GPT-5.5 Pro", score: 82 },
-        "Balanced": { engine: "Gemini 3.1 Pro", score: 76 },
-        "Speed": { engine: "GPT-5.4", score: 62 }
-    },
-    "Others": {
-        "Quality": { engine: "GPT-5.5", score: 80 },
-        "Balanced": { engine: "Gemini 3 Flash", score: 72 },
-        "Speed": { engine: "GPT-5.4 Mini", score: 60 }
-    }
-};
-
-/**
- * Available language buckets for user selection
- */
-const AVAILABLE_LANGUAGE_BUCKETS = ["RTL", "CJK", "European", "Others"];
-
-/**
- * Translation Profile descriptions
- */
-const PROFILE_DESCRIPTIONS = {
-    "Quality": "Maximum accuracy & compliance. Prioritizes precision over speed. Best for legal, medical, technical content.",
-    "Balanced": "Equilibrium between speed and quality. Suitable for marketing, creative, general content.",
-    "Speed": "Fast turnaround with acceptable quality. For UI strings, sports commentary, time-sensitive content."
+const STRATEGY_VARIANT_B = {
+    ...STRATEGY_VARIANT_A,
+    "Nursing": "Quality",
+    "Patient Education": "Quality",
+    "Physical Therapy": "Quality",
+    "Veterinary Medicine": "Quality",
+    "Software UA": "Quality"
 };
 
 // ==========================================================================
-// 2. DOMAIN CATEGORIES (RETAINED FOR UI GROUPING)
+// 3. DOMAIN CATEGORIES (UI GROUPING)
 // ==========================================================================
 
 const DOMAIN_CATEGORIES = {
@@ -143,15 +149,25 @@ const DOMAIN_CATEGORIES = {
 };
 
 // ==========================================================================
-// 3. NEW ROUTING ENGINE & SIMULATOR
+// 4. ROUTING ENGINE (Matrix-based)
 // ==========================================================================
 
+let activeStrategy = "variant_a";
+
 /**
- * Route a Content Type + Language Bucket combination to the optimal engine
+ * Get translation profile for content type based on active strategy
+ */
+function getTranslationProfile(contentType) {
+    const strategyMap = activeStrategy === "variant_a" ? STRATEGY_VARIANT_A : STRATEGY_VARIANT_B;
+    return strategyMap[contentType] || "Balanced";
+}
+
+/**
+ * Route content type + language bucket -> optimal engine
  */
 function routeTranslation(contentType, languageBucket) {
-    const profile = CONTENT_TYPE_TO_PROFILE[contentType] || "Balanced";
-    const engineData = LANGUAGE_BUCKETS[languageBucket][profile];
+    const profile = getTranslationProfile(contentType);
+    const engineData = LANGUAGE_BUCKET_ENGINES[languageBucket][profile];
     
     if (!engineData) {
         return { engine: "N/A", score: 0, profile, bucket: languageBucket };
@@ -162,7 +178,7 @@ function routeTranslation(contentType, languageBucket) {
         score: engineData.score,
         profile,
         bucket: languageBucket,
-        description: PROFILE_DESCRIPTIONS[profile]
+        rationale: engineData.rationale
     };
 }
 
@@ -170,7 +186,7 @@ function routeTranslation(contentType, languageBucket) {
  * Simulate routing for all Content Types across a Language Bucket
  */
 function simulateLanguageBucketRouting(languageBucket) {
-    return Object.keys(CONTENT_TYPE_TO_PROFILE).map(contentType => {
+    return Object.keys(DOMAIN_CATEGORIES).map(contentType => {
         const routing = routeTranslation(contentType, languageBucket);
         return {
             contentType,
@@ -181,7 +197,8 @@ function simulateLanguageBucketRouting(languageBucket) {
             score: routing.score,
             topEngine: routing.engine,
             topScore: routing.score,
-            rationale: routing.description
+            rationale: routing.rationale,
+            strategy: activeStrategy
         };
     });
 }
@@ -190,14 +207,14 @@ function simulateLanguageBucketRouting(languageBucket) {
  * Generate consensus across all language buckets
  */
 function generateConsensusRouting() {
-    const masterContentTypes = Object.keys(CONTENT_TYPE_TO_PROFILE);
+    const masterContentTypes = Object.keys(DOMAIN_CATEGORIES);
     
     return masterContentTypes.map(contentType => {
-        const profile = CONTENT_TYPE_TO_PROFILE[contentType];
+        const profile = getTranslationProfile(contentType);
         const routingsByBucket = {};
         
-        AVAILABLE_LANGUAGE_BUCKETS.forEach(bucket => {
-            const engineData = LANGUAGE_BUCKETS[bucket][profile];
+        ["RTL", "CJK", "European", "Others"].forEach(bucket => {
+            const engineData = LANGUAGE_BUCKET_ENGINES[bucket][profile];
             routingsByBucket[bucket] = {
                 engine: engineData.engine,
                 score: engineData.score
@@ -220,13 +237,14 @@ function generateConsensusRouting() {
             routingsByBucket,
             topEngine,
             topScore,
-            rationale: PROFILE_DESCRIPTIONS[profile]
+            rationale: `[${profile}] ${Object.entries(routingsByBucket).map(([b, r]) => `${b}: ${r.engine}`).join(" | ")}`,
+            strategy: activeStrategy
         };
     });
 }
 
 // ==========================================================================
-// 4. UI STATE & PIPELINE MANAGEMENT
+// 5. UI STATE & PIPELINE MANAGEMENT
 // ==========================================================================
 
 let activeSource = "consensus";
@@ -282,13 +300,13 @@ function getNormalizedType(type) {
 function processRoutingData() {
     pipelineData.consensus = generateConsensusRouting();
     
-    AVAILABLE_LANGUAGE_BUCKETS.forEach(bucket => {
+    ["RTL", "CJK", "European", "Others"].forEach(bucket => {
         pipelineData[bucket] = simulateLanguageBucketRouting(bucket);
     });
 }
 
 // ==========================================================================
-// 5. UI RENDERING ENGINE
+// 6. UI RENDERING ENGINE
 // ==========================================================================
 
 const searchInput = document.getElementById("search-input");
@@ -308,14 +326,9 @@ function isGeminiFamily(engine) {
     return engine && engine.startsWith("Gemini");
 }
 
-function isDeepSeekFamily(engine) {
-    return engine && engine.startsWith("DeepSeek");
-}
-
 function getEngineFamily(engine) {
     if (isGptFamily(engine)) return "gpt";
     if (isGeminiFamily(engine)) return "gemini";
-    if (isDeepSeekFamily(engine)) return "deepseek";
     return "neutral";
 }
 
@@ -341,6 +354,7 @@ function renderKPIs() {
     document.getElementById("kpi-max-score").textContent = maxScore + "%";
     document.getElementById("kpi-avg-score").textContent = activeDataset.length > 0 ? Math.round(sumScore / activeDataset.length) + "%" : "0%";
     document.getElementById("kpi-dominant-model").textContent = activeDataset.length > 0 ? activeDataset[0].topEngine : "N/A";
+    document.getElementById("kpi-active-variant").textContent = activeStrategy === "variant_a" ? "Variant A" : "Variant B";
 }
 
 function getFilteredData() {
@@ -418,8 +432,7 @@ function renderMainViews() {
                 const bucketEntries = Object.entries(item.routingsByBucket);
                 bucketEntries.forEach(([bucket, routing]) => {
                     const bucketFamily = getEngineFamily(routing.engine);
-                    const colorVar = bucketFamily === "gpt" ? "var(--color-gpt)" : 
-                                     bucketFamily === "gemini" ? "var(--color-gemini)" : "#A78BFA";
+                    const colorVar = bucketFamily === "gpt" ? "var(--color-gpt)" : "var(--color-gemini)";
                     bucketsHTML += `
                         <div class="mini-chart-row">
                             <span class="mini-model-name monospace-font">${bucket}</span>
@@ -431,8 +444,7 @@ function renderMainViews() {
                     `;
                 });
             } else if (item.bucket) {
-                const colorVar = engineFamily === "gpt" ? "var(--color-gpt)" : 
-                                 engineFamily === "gemini" ? "var(--color-gemini)" : "#A78BFA";
+                const colorVar = engineFamily === "gpt" ? "var(--color-gpt)" : "var(--color-gemini)";
                 bucketsHTML = `
                     <div class="mini-chart-row">
                         <span class="mini-model-name monospace-font">${item.bucket}</span>
@@ -533,7 +545,7 @@ function renderMainViews() {
 }
 
 // ==========================================================================
-// 6. TOOLTIP ACTIONS
+// 7. TOOLTIP ACTIONS
 // ==========================================================================
 
 function triggerTooltip(e, item) {
@@ -551,11 +563,6 @@ function triggerTooltip(e, item) {
         tooltipModel.style.color = "#34D399";
         tooltipModel.style.border = "1px solid rgba(16, 185, 129, 0.3)";
         hoverTooltip.style.borderColor = "var(--color-gemini)";
-    } else if (family === "deepseek") {
-        tooltipModel.style.backgroundColor = "rgba(139, 92, 246, 0.1)";
-        tooltipModel.style.color = "#A78BFA";
-        tooltipModel.style.border = "1px solid rgba(139, 92, 246, 0.3)";
-        hoverTooltip.style.borderColor = "#A78BFA";
     } else {
         tooltipModel.style.backgroundColor = "var(--color-tie-bg)";
         tooltipModel.style.color = "#9CA3AF";
@@ -589,7 +596,7 @@ function dismissTooltip() {
 }
 
 // ==========================================================================
-// 7. CANVAS CHART DRAWER
+// 8. CANVAS CHART DRAWER
 // ==========================================================================
 
 let canvasAnimFrame = null;
@@ -683,7 +690,39 @@ function triggerCanvasAnimation() {
 }
 
 // ==========================================================================
-// 8. VIEW TRANSITIONS & TABS
+// 9. STRATEGY VARIANT SWITCHER
+// ==========================================================================
+
+function setupStrategyToggle() {
+    const strategyBtns = document.querySelectorAll(".strategy-btn");
+    const strategyDesc = document.getElementById("strategy-desc");
+
+    strategyBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            strategyBtns.forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+
+            activeStrategy = btn.getAttribute("data-strategy");
+
+            // Update description
+            if (activeStrategy === "variant_a") {
+                strategyDesc.innerHTML = `<p><strong>Variant A:</strong> Standard tier assignments emphasizing legal, medical, and formal domains in Quality profile.</p>`;
+            } else {
+                strategyDesc.innerHTML = `<p><strong>Variant B:</strong> Extended Quality coverage includes Nursing, Patient Education, Physical Therapy, Veterinary, and Software UA.</p>`;
+            }
+
+            // Reprocess data with new strategy
+            processRoutingData();
+            activeDataset = pipelineData[activeSource] || [];
+            selectedFilterProfile = "all";
+
+            updateViewport();
+        });
+    });
+}
+
+// ==========================================================================
+// 10. VIEW TRANSITIONS & TABS
 // ==========================================================================
 
 function updateViewport() {
@@ -765,7 +804,7 @@ function setupSearch() {
 }
 
 // ==========================================================================
-// 9. APP BOOTSTRAPPING
+// 11. APP BOOTSTRAPPING
 // ==========================================================================
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -773,6 +812,7 @@ window.addEventListener("DOMContentLoaded", () => {
     activeDataset = pipelineData.consensus;
     
     initializeLiveDate();
+    setupStrategyToggle();
     setupTabsAndSelectors();
     setupSearch();
     updateViewport();
