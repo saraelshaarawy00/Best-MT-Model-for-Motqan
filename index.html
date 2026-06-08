@@ -24,7 +24,7 @@
                 <h1 class="header-title">MT Routing Intelligence Report</h1>
                 <div class="header-subtitle-wrapper">
                     <span class="pulse-dot"></span>
-                    <span class="header-subtitle">Language Bucket × Translation Profile × Engine Routing &middot; 39 Content Types &middot; 4 Language Buckets</span>
+                    <span class="header-subtitle">Two-Variant Strategy Matrix · Language Bucket × Translation Profile × Engine Selection</span>
                 </div>
             </div>
             <div class="header-right">
@@ -37,8 +37,26 @@
 
     <!-- Main Container -->
     <main class="dashboard-viewport">
-        <!-- Source Toggles Section -->
-        <section class="toggle-section" aria-label="Routing Scenario Selection">
+        <!-- Strategy Variant Toggle Section -->
+        <section class="strategy-selector fade-in-up" style="--order: 0;">
+            <div class="strategy-header">
+                <span class="strategy-label"><i class="fa-solid fa-code-branch"></i> Routing Strategy:</span>
+                <div class="strategy-toggle-group">
+                    <button class="strategy-btn active" data-strategy="variant_a" title="Standard logic: Legal, Medical, Patents → Quality profile">
+                        <i class="fa-solid fa-code"></i> Strategy Variant A
+                    </button>
+                    <button class="strategy-btn" data-strategy="variant_b" title="Extended Quality: Add Nursing, Patient Edu, Physical Therapy, Software UA">
+                        <i class="fa-solid fa-code"></i> Strategy Variant B
+                    </button>
+                </div>
+            </div>
+            <div class="strategy-description" id="strategy-desc">
+                <p><strong>Variant A:</strong> Standard tier assignments emphasizing legal, medical, and formal domains in Quality profile.</p>
+            </div>
+        </section>
+
+        <!-- Language Bucket Tabs -->
+        <section class="toggle-section" aria-label="Language Bucket Selection">
             <nav class="source-nav" id="source-tabs">
                 <button class="source-tab-btn active" data-source="consensus">
                     <i class="fa-solid fa-layer-group"></i> Consensus (All Buckets)
@@ -95,11 +113,11 @@
             </div>
             <div class="kpi-card fade-in-up" style="--order: 5;">
                 <div class="kpi-header">
-                    <span class="kpi-title">Average Routing Score</span>
-                    <span class="kpi-badge avg-accent"><i class="fa-solid fa-chart-line"></i></span>
+                    <span class="kpi-title">Strategy Variant</span>
+                    <span class="kpi-badge avg-accent"><i class="fa-solid fa-sitemap"></i></span>
                 </div>
-                <h2 class="kpi-value monospace-font" id="kpi-avg-score">0%</h2>
-                <div class="kpi-subtext">Across All Content Types</div>
+                <h2 class="kpi-value monospace-font" id="kpi-active-variant">Variant A</h2>
+                <div class="kpi-subtext">Active Strategy Matrix</div>
             </div>
         </section>
 
@@ -182,7 +200,7 @@
             <!-- Model Legend Panel -->
             <section class="panel legend-panel fade-in-up" style="--order: 8;">
                 <h3 class="panel-heading"><i class="fa-solid fa-circle-info"></i> Routing Architecture</h3>
-                <p class="panel-description">Translation Profiles & Engine Families</p>
+                <p class="panel-description">Language Buckets × Translation Profiles × Optimal Engines</p>
                 
                 <div class="legend-grid">
                     <!-- Translation Profiles Column -->
@@ -199,8 +217,7 @@
                         <h4 class="legend-col-title gemini-text"><i class="fa-solid fa-microchip"></i> Engine Families</h4>
                         <ul class="legend-list">
                             <li><span class="swatch" style="background: #60A5FA;"></span> <span class="monospace-font">GPT</span> — OpenAI Models</li>
-                            <li><span class="swatch" style="background: #34D399;"></span> <span class="monospace-font">Gemini</span> — Google Generative AI</li>
-                            <li><span class="swatch" style="background: #A78BFA;"></span> <span class="monospace-font">DeepSeek</span> — DeepSeek Premium</li>
+                            <li><span class="swatch" style="background: #34D399;"></span> <span class="monospace-font">Gemini</span> — Google AI Models</li>
                         </ul>
                     </div>
                 </div>
@@ -220,7 +237,7 @@
     <!-- C-Suite Footer -->
     <footer class="ceo-footer">
         <div class="footer-inner">
-            <p class="footer-text">MT Routing Engine powered by Content Type → Translation Profile → Language Bucket Architecture — Motqan AI · Internal Strategic Use Only</p>
+            <p class="footer-text">MT Routing Engine powered by Two-Variant Strategy Matrix: Content Type → Translation Profile → Language Bucket → Engine Selection — Motqan AI · Internal Strategic Use Only</p>
             <p class="footer-subtext">&copy; 2026 Motqan Translation Engineering. All Rights Reserved.</p>
         </div>
     </footer>
