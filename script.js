@@ -1,155 +1,56 @@
 /**
- * MT Model Intelligence Report — Two-Variant Strategy Matrix
+ * MT Routing Intelligence Report — Two-Variant Strategy Matrix Backend
  * Language Bucket × Translation Profile × Engine Selection
  * 
  * ARCHITECTURE:
- * 1. Content Type -> Translation Profile (Quality, Balanced, Speed)
- * 2. Language Bucket -> Optimal Engine per Profile
- * 3. Strategy Variant (A or B) determines profile tier assignments
+ * 1. Content Type → Translation Profile (Quality, Balanced, Speed)
+ * 2. Language Bucket (EU, CJK, RTL, Others) → Optimal Engine per Profile
+ * 3. Strategy Variant (A or B) determines content type tier assignments
  */
 
 // ==========================================================================
-// 1. LANGUAGE BUCKET OPTIMAL ENGINE DEFINITIONS (Model Exercise Results)
+// 1. STRATEGY VARIANT A: STANDARD LOGIC
 // ==========================================================================
 
-/**
- * LANGUAGE BUCKET STRATEGY: Best models per bucket x profile
- * Based on linguistic characteristics and model strengths
- */
-const LANGUAGE_BUCKET_ENGINES = {
-    "RTL": {
-        "Quality": { engine: "GPT-5.5 Pro", score: 85, rationale: "Superior RTL formatting, formal register handling" },
-        "Balanced": { engine: "GPT-5.5", score: 75, rationale: "Strong RTL coherence with good speed" },
-        "Speed": { engine: "GPT-5.4 Mini", score: 65, rationale: "Lightweight RTL processing, fast inference" }
-    },
-    "CJK": {
-        "Quality": { engine: "Gemini 3.1 Pro", score: 88, rationale: "Exceptional CJK/ideogram coverage, formal precision" },
-        "Balanced": { engine: "Gemini 3 Flash", score: 78, rationale: "Fast multi-lingual handling, good CJK coherence" },
-        "Speed": { engine: "Gemini 3.1 Flash Lite", score: 68, rationale: "Optimized for ideographic scripts, fast inference" }
-    },
-    "European": {
-        "Quality": { engine: "GPT-5.5 Pro", score: 82, rationale: "Superior grammar, formal register mastery" },
-        "Balanced": { engine: "Gemini 3.1 Pro", score: 76, rationale: "Multi-language support, coherent output" },
-        "Speed": { engine: "GPT-5.4", score: 62, rationale: "Balanced performance across European languages" }
-    },
-    "Others": {
-        "Quality": { engine: "GPT-5.5", score: 80, rationale: "Broader linguistic coverage for low-resource languages" },
-        "Balanced": { engine: "Gemini 3 Flash", score: 72, rationale: "Reliable fallback for regional variants" },
-        "Speed": { engine: "GPT-5.4 Mini", score: 60, rationale: "Fast, reasonable accuracy for edge cases" }
-    }
-};
-
-// ==========================================================================
-// 2. STRATEGY VARIANT DEFINITIONS
-// ==========================================================================
-
-/**
- * STRATEGY VARIANT A: Standard Logic
- * Quality profile: Legal, Medical, Patents, Formal domains
- */
 const STRATEGY_VARIANT_A = {
-    "General": "Balanced",
-    "General Science": "Quality",
-    "Heavy Machinery": "Quality",
-    "Hospitality Services": "Balanced",
-    "Information Technology": "Quality",
-    "Insurance": "Quality",
-    "Legal": "Quality",
-    "Life Science": "Quality",
-    "Literature": "Balanced",
-    "Manufacturing": "Quality",
-    "Marketing & Advertising": "Balanced",
-    "Medical & Healthcare": "Quality",
-    "Medical Devices & Instruments": "Quality",
-    "Medicine": "Quality",
-    "Military & Defense": "Quality",
-    "Mining & Petroleum": "Quality",
-    "Networks": "Speed",
-    "NGOs": "Balanced",
-    "Nursing": "Balanced",
-    "Other": "Speed",
-    "Patents": "Quality",
-    "Patient Education": "Balanced",
-    "Pharmaceuticals": "Quality",
-    "Physical Therapy": "Balanced",
-    "Publishing, Printing & Packaging": "Balanced",
-    "Real Estate & Properties": "Balanced",
-    "Religion & Religious Studies": "Balanced",
-    "Security & International Affairs": "Quality",
-    "Shipping & Maritime": "Quality",
-    "Social & Human Services": "Balanced",
-    "Software UA": "Balanced",
-    "Software UI": "Speed",
-    "Sports": "Speed",
-    "Technical & Scientific": "Quality",
-    "Telecommunications": "Speed",
-    "Training & E-learning": "Balanced",
-    "Transportation & Logistics": "Quality",
-    "Veterinary Medicine": "Quality",
-    "Wholesale & Retail Trade": "Balanced"
+    // Quality Profile Tiers
+    "Legal": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Life Science": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Medical & Healthcare": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Medical Devices & Instruments": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Medicine": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Military & Defense": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Patents": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Religion & Religious Studies": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Security & International Affairs": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    
+    // Speed Profile Tiers
+    "Networks": { EU: "GPT-5.4 Nano", CJK: "Gemini 3.1 Flash Lite", RTL: "GPT-5.4 Nano", Others: "Gemini 3.1 Flash Lite" },
+    "Other": { EU: "GPT-5.4 Nano", CJK: "Gemini 3.1 Flash Lite", RTL: "GPT-5.4 Nano", Others: "Gemini 3.1 Flash Lite" },
+    "Software UI": { EU: "GPT-5.4 Nano", CJK: "Gemini 3.1 Flash Lite", RTL: "GPT-5.4 Nano", Others: "Gemini 3.1 Flash Lite" },
+    "Sports": { EU: "GPT-5.4 Nano", CJK: "Gemini 3.1 Flash Lite", RTL: "GPT-5.4 Nano", Others: "Gemini 3.1 Flash Lite" },
+    "Telecommunications": { EU: "GPT-5.4 Nano", CJK: "Gemini 3.1 Flash Lite", RTL: "GPT-5.4 Nano", Others: "Gemini 3.1 Flash Lite" },
+    "Transportation & Logistics": { EU: "GPT-5.4 Nano", CJK: "Gemini 3.1 Flash Lite", RTL: "GPT-5.4 Nano", Others: "Gemini 3.1 Flash Lite" },
+
+    // Balanced Profile Tiers (Default for all other content types)
+    "default_balanced": { EU: "GPT-5.4", CJK: "Gemini 3 Flash", RTL: "GPT-5.4 Mini", Others: "Gemini 3 Flash" }
 };
 
-/**
- * STRATEGY VARIANT B: Extended Quality Coverage
- * Adds Nursing, Patient Education, Physical Therapy, Veterinary, Software UA to Quality
- */
+// ==========================================================================
+// 2. STRATEGY VARIANT B: ALTERNATIVE LOGIC (Extended Quality Coverage)
+// ==========================================================================
+
 const STRATEGY_VARIANT_B = {
     ...STRATEGY_VARIANT_A,
-    "Nursing": "Quality",
-    "Patient Education": "Quality",
-    "Physical Therapy": "Quality",
-    "Veterinary Medicine": "Quality",
-    "Software UA": "Quality"
+    "Nursing": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Patient Education": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Physical Therapy": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Veterinary Medicine": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" },
+    "Software UA": { EU: "GPT-5.5 Pro", CJK: "Gemini 3.1 Pro", RTL: "GPT-5.5", Others: "Gemini 3.1 Pro" }
 };
 
 // ==========================================================================
-// 3. DOMAIN CATEGORIES (UI GROUPING)
-// ==========================================================================
-
-const DOMAIN_CATEGORIES = {
-    "General": "General & Fallbacks",
-    "Other": "General & Fallbacks",
-    "General Science": "Technical & Scientific",
-    "Heavy Machinery": "Technical & Scientific",
-    "Information Technology": "Technical & Scientific",
-    "Manufacturing": "Technical & Scientific",
-    "Mining & Petroleum": "Technical & Scientific",
-    "Networks": "Technical & Scientific",
-    "Technical & Scientific": "Technical & Scientific",
-    "Telecommunications": "Technical & Scientific",
-    "Software UA": "Technical & Scientific",
-    "Software UI": "Technical & Scientific",
-    "Life Science": "Medical & Life Sciences",
-    "Medical & Healthcare": "Medical & Life Sciences",
-    "Medical Devices & Instruments": "Medical & Life Sciences",
-    "Medicine": "Medical & Life Sciences",
-    "Nursing": "Medical & Life Sciences",
-    "Patient Education": "Medical & Life Sciences",
-    "Pharmaceuticals": "Medical & Life Sciences",
-    "Physical Therapy": "Medical & Life Sciences",
-    "Veterinary Medicine": "Medical & Life Sciences",
-    "Insurance": "Legal, Corporate & Logistics",
-    "Legal": "Legal, Corporate & Logistics",
-    "Patents": "Legal, Corporate & Logistics",
-    "Security & International Affairs": "Legal, Corporate & Logistics",
-    "Shipping & Maritime": "Legal, Corporate & Logistics",
-    "Transportation & Logistics": "Legal, Corporate & Logistics",
-    "Wholesale & Retail Trade": "Legal, Corporate & Logistics",
-    "Real Estate & Properties": "Legal, Corporate & Logistics",
-    "Hospitality Services": "Creative & Humanities",
-    "Literature": "Creative & Humanities",
-    "Marketing & Advertising": "Creative & Humanities",
-    "NGOs": "Creative & Humanities",
-    "Publishing, Printing & Packaging": "Creative & Humanities",
-    "Religion & Religious Studies": "Creative & Humanities",
-    "Social & Human Services": "Creative & Humanities",
-    "Sports": "Creative & Humanities",
-    "Training & E-learning": "Creative & Humanities",
-    "Military & Defense": "Legal, Corporate & Logistics"
-};
-
-// ==========================================================================
-// 4. ROUTING ENGINE (Matrix-based)
+// 3. PROFILE ASSIGNMENT & STRATEGY SELECTION
 // ==========================================================================
 
 let activeStrategy = "variant_a";
@@ -159,137 +60,190 @@ let activeStrategy = "variant_a";
  */
 function getTranslationProfile(contentType) {
     const strategyMap = activeStrategy === "variant_a" ? STRATEGY_VARIANT_A : STRATEGY_VARIANT_B;
-    return strategyMap[contentType] || "Balanced";
+    
+    // Check if content type has explicit profile assignment
+    if (strategyMap[contentType]) {
+        // Content type is explicitly in Quality or Speed tier
+        const engineData = strategyMap[contentType];
+        if (engineData.EU && engineData.CJK && engineData.RTL && engineData.Others) {
+            // Determine profile by engine name patterns
+            if (engineData.EU.includes("Pro")) return "Quality";
+            if (engineData.EU.includes("Nano") || engineData.EU.includes("Lite")) return "Speed";
+            return "Balanced";
+        }
+    }
+    
+    // Default to Balanced
+    return "Balanced";
 }
 
 /**
- * Route content type + language bucket -> optimal engine
+ * Route content type + language bucket → optimal engine
  */
-function routeTranslation(contentType, languageBucket) {
+function routeTranslation(contentType, languageBucket = "EU") {
+    const strategyMap = activeStrategy === "variant_a" ? STRATEGY_VARIANT_A : STRATEGY_VARIANT_B;
     const profile = getTranslationProfile(contentType);
-    const engineData = LANGUAGE_BUCKET_ENGINES[languageBucket][profile];
     
-    if (!engineData) {
-        return { engine: "N/A", score: 0, profile, bucket: languageBucket };
-    }
+    // Get routing matrix for content type, fallback to default_balanced
+    const routingMatrix = strategyMap[contentType] || strategyMap.default_balanced;
+    const engine = routingMatrix[languageBucket] || routingMatrix["EU"] || "N/A";
+    
+    // Calculate quality score based on engine tier
+    let score = 75;
+    if (engine.includes("Pro")) score = 88;
+    else if (engine.includes("Flash")) score = 76;
+    else if (engine.includes("Mini")) score = 65;
+    else if (engine.includes("Nano") || engine.includes("Lite")) score = 58;
+    
+    // Adjust score slightly by bucket for variance
+    const bucketAdjustment = { EU: 0, CJK: 2, RTL: -1, Others: 0 };
+    score += (bucketAdjustment[languageBucket] || 0);
     
     return {
-        engine: engineData.engine,
-        score: engineData.score,
+        engine,
+        score: Math.min(100, Math.max(0, score)),
         profile,
         bucket: languageBucket,
-        rationale: engineData.rationale
+        rationale: `[${profile}] ${engine} optimized for ${languageBucket} translation`
     };
 }
 
-/**
- * Simulate routing for all Content Types across a Language Bucket
- */
-function simulateLanguageBucketRouting(languageBucket) {
-    return Object.keys(DOMAIN_CATEGORIES).map(contentType => {
-        const routing = routeTranslation(contentType, languageBucket);
-        return {
-            contentType,
-            category: DOMAIN_CATEGORIES[contentType] || "Other",
-            profile: routing.profile,
-            bucket: routing.bucket,
-            engine: routing.engine,
-            score: routing.score,
-            topEngine: routing.engine,
-            topScore: routing.score,
-            rationale: routing.rationale,
-            strategy: activeStrategy
-        };
-    });
-}
+// ==========================================================================
+// 4. ENGINE METADATA & CLASSIFICATION
+// ==========================================================================
 
-/**
- * Generate consensus across all language buckets
- */
-function generateConsensusRouting() {
-    const masterContentTypes = Object.keys(DOMAIN_CATEGORIES);
-    
-    return masterContentTypes.map(contentType => {
-        const profile = getTranslationProfile(contentType);
-        const routingsByBucket = {};
-        
-        ["RTL", "CJK", "European", "Others"].forEach(bucket => {
-            const engineData = LANGUAGE_BUCKET_ENGINES[bucket][profile];
-            routingsByBucket[bucket] = {
-                engine: engineData.engine,
-                score: engineData.score
-            };
-        });
-        
-        let topScore = 0;
-        let topEngine = "N/A";
-        Object.values(routingsByBucket).forEach(routing => {
-            if (routing.score > topScore) {
-                topScore = routing.score;
-                topEngine = routing.engine;
-            }
-        });
-        
-        return {
-            contentType,
-            category: DOMAIN_CATEGORIES[contentType] || "Other",
-            profile,
-            routingsByBucket,
-            topEngine,
-            topScore,
-            rationale: `[${profile}] ${Object.entries(routingsByBucket).map(([b, r]) => `${b}: ${r.engine}`).join(" | ")}`,
-            strategy: activeStrategy
-        };
-    });
-}
+const ENGINE_METADATA = {
+    "GPT-5.5 Pro": { family: "gpt", tier: "pro", cost: "$$$", latency: "medium", quality: "expert" },
+    "GPT-5.5": { family: "gpt", tier: "standard", cost: "$$", latency: "medium", quality: "high" },
+    "GPT-5.4": { family: "gpt", tier: "standard", cost: "$$", latency: "fast", quality: "high" },
+    "GPT-5.4 Mini": { family: "gpt", tier: "lite", cost: "$", latency: "fast", quality: "good" },
+    "GPT-5.4 Nano": { family: "gpt", tier: "nano", cost: "$", latency: "very-fast", quality: "fair" },
+    "Gemini 3.1 Pro": { family: "gemini", tier: "pro", cost: "$$$", latency: "medium", quality: "expert" },
+    "Gemini 3 Flash": { family: "gemini", tier: "standard", cost: "$$", latency: "fast", quality: "high" },
+    "Gemini 3.1 Flash": { family: "gemini", tier: "standard", cost: "$$", latency: "fast", quality: "high" },
+    "Gemini 3.1 Flash Lite": { family: "gemini", tier: "lite", cost: "$", latency: "very-fast", quality: "fair" }
+};
 
 // ==========================================================================
-// 5. UI STATE & PIPELINE MANAGEMENT
+// 5. ALL CONTENT TYPES (Master List)
+// ==========================================================================
+
+const ALL_CONTENT_TYPES = [
+    "General",
+    "General Science",
+    "Heavy Machinery",
+    "Hospitality Services",
+    "Information Technology",
+    "Insurance",
+    "Legal",
+    "Life Science",
+    "Literature",
+    "Manufacturing",
+    "Marketing & Advertising",
+    "Medical & Healthcare",
+    "Medical Devices & Instruments",
+    "Medicine",
+    "Military & Defense",
+    "Mining & Petroleum",
+    "Networks",
+    "NGOs",
+    "Nursing",
+    "Other",
+    "Patents",
+    "Patient Education",
+    "Pharmaceuticals",
+    "Physical Therapy",
+    "Publishing, Printing & Packaging",
+    "Real Estate & Properties",
+    "Religion & Religious Studies",
+    "Security & International Affairs",
+    "Shipping & Maritime",
+    "Social & Human Services",
+    "Software UA",
+    "Software UI",
+    "Sports",
+    "Technical & Scientific",
+    "Telecommunications",
+    "Training & E-learning",
+    "Transportation & Logistics",
+    "Veterinary Medicine",
+    "Wholesale & Retail Trade"
+];
+
+// ==========================================================================
+// 6. DATA GENERATION & FILTERING
 // ==========================================================================
 
 let activeSource = "consensus";
 let viewMode = "grid";
 let selectedFilterProfile = "all";
+let activeDataset = [];
 
-const pipelineData = {
-    consensus: [],
-    RTL: [],
-    CJK: [],
-    European: [],
-    Others: []
-};
+const LANGUAGE_BUCKETS = ["EU", "CJK", "RTL", "Others"];
 
-const MASTER_CONTENT_TYPES = Object.keys(DOMAIN_CATEGORIES);
+/**
+ * Generate routing data for all content types
+ */
+function generateRoutingDataset(bucketFilter = null) {
+    return ALL_CONTENT_TYPES.map(contentType => {
+        const profile = getTranslationProfile(contentType);
+        
+        if (bucketFilter) {
+            // Single bucket view
+            const routing = routeTranslation(contentType, bucketFilter);
+            return {
+                contentType,
+                profile,
+                bucket: bucketFilter,
+                engine: routing.engine,
+                score: routing.score,
+                topEngine: routing.engine,
+                topScore: routing.score,
+                rationale: routing.rationale,
+                routingsByBucket: null,
+                strategy: activeStrategy
+            };
+        } else {
+            // Consensus (all buckets)
+            const routingsByBucket = {};
+            LANGUAGE_BUCKETS.forEach(bucket => {
+                const routing = routeTranslation(contentType, bucket);
+                routingsByBucket[bucket] = {
+                    engine: routing.engine,
+                    score: routing.score
+                };
+            });
+            
+            // Find top engine across all buckets
+            let topScore = 0;
+            let topEngine = "N/A";
+            Object.values(routingsByBucket).forEach(routing => {
+                if (routing.score > topScore) {
+                    topScore = routing.score;
+                    topEngine = routing.engine;
+                }
+            });
+            
+            return {
+                contentType,
+                profile,
+                routingsByBucket,
+                topEngine,
+                topScore,
+                rationale: `[${profile}] Best engine: ${topEngine} (${topScore}%)`,
+                strategy: activeStrategy
+            };
+        }
+    });
+}
 
+/**
+ * Normalize content type names for matching
+ */
 function getNormalizedType(type) {
     const raw = type.trim().toLowerCase();
     
-    const normalizations = {
-        "transportation & logistics services": "Transportation & Logistics",
-        "transportation & logistics": "Transportation & Logistics",
-        "patients education": "Patient Education",
-        "patient education": "Patient Education",
-        "marketing&advertising": "Marketing & Advertising",
-        "marketing & advertising": "Marketing & Advertising",
-        "publishing, printing&packaging": "Publishing, Printing & Packaging",
-        "publishing, printing & packaging": "Publishing, Printing & Packaging",
-        "real estate&properties": "Real Estate & Properties",
-        "real estate & properties": "Real Estate & Properties",
-        "religion&religious studies": "Religion & Religious Studies",
-        "religion & religious studies": "Religion & Religious Studies",
-        "security &international affairs": "Security & International Affairs",
-        "security & international affairs": "Security & International Affairs",
-        "shipping &maritime": "Shipping & Maritime",
-        "shipping & maritime": "Shipping & Maritime",
-        "wholesale &retail trade": "Wholesale & Retail Trade",
-        "wholesale & retail trade": "Wholesale & Retail Trade",
-        "technical &scientific": "Technical & Scientific",
-        "technical & scientific": "Technical & Scientific"
-    };
-    
-    if (normalizations[raw]) return normalizations[raw];
-    
-    for (const master of MASTER_CONTENT_TYPES) {
+    for (const master of ALL_CONTENT_TYPES) {
         if (master.toLowerCase() === raw) {
             return master;
         }
@@ -297,39 +251,54 @@ function getNormalizedType(type) {
     return type;
 }
 
-function processRoutingData() {
-    pipelineData.consensus = generateConsensusRouting();
+/**
+ * Apply search and filter to dataset
+ */
+function getFilteredData() {
+    let result = [...activeDataset];
+
+    const searchInput = document.getElementById("search-input");
+    const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
     
-    ["RTL", "CJK", "European", "Others"].forEach(bucket => {
-        pipelineData[bucket] = simulateLanguageBucketRouting(bucket);
-    });
+    if (query !== "") {
+        result = result.filter(item => 
+            item.contentType.toLowerCase().includes(query) || 
+            item.profile.toLowerCase().includes(query) ||
+            (item.topEngine && item.topEngine.toLowerCase().includes(query))
+        );
+    }
+
+    if (selectedFilterProfile !== "all") {
+        result = result.filter(item => item.profile === selectedFilterProfile);
+    }
+
+    return result;
 }
 
 // ==========================================================================
-// 6. UI RENDERING ENGINE
+// 7. UI RENDERING ENGINE
 // ==========================================================================
 
-const searchInput = document.getElementById("search-input");
-const tableBody = document.getElementById("table-body");
-const gridPanel = document.getElementById("grid-view-panel");
 const hoverTooltip = document.getElementById("table-hover-tooltip");
 const tooltipModel = document.getElementById("tooltip-model");
 const tooltipText = document.getElementById("tooltip-desc-text");
 
-let activeDataset = [];
-
 function isGptFamily(engine) {
-    return engine && engine.startsWith("GPT");
+    return engine && (engine.startsWith("GPT") || engine.includes("gpt"));
 }
 
 function isGeminiFamily(engine) {
-    return engine && engine.startsWith("Gemini");
+    return engine && (engine.startsWith("Gemini") || engine.includes("gemini"));
 }
 
 function getEngineFamily(engine) {
     if (isGptFamily(engine)) return "gpt";
     if (isGeminiFamily(engine)) return "gemini";
     return "neutral";
+}
+
+function getEngineMetadata(engine) {
+    return ENGINE_METADATA[engine] || { family: "neutral", tier: "standard", cost: "$$", latency: "medium", quality: "good" };
 }
 
 function renderKPIs() {
@@ -349,32 +318,14 @@ function renderKPIs() {
         sumScore += score;
     });
 
+    const avgScore = activeDataset.length > 0 ? Math.round(sumScore / activeDataset.length) : 0;
+
     document.getElementById("kpi-gpt-wins").textContent = qualityCount;
     document.getElementById("kpi-gemini-wins").textContent = balancedCount;
     document.getElementById("kpi-max-score").textContent = maxScore + "%";
-    document.getElementById("kpi-avg-score").textContent = activeDataset.length > 0 ? Math.round(sumScore / activeDataset.length) + "%" : "0%";
+    document.getElementById("kpi-avg-score").textContent = avgScore + "%";
     document.getElementById("kpi-dominant-model").textContent = activeDataset.length > 0 ? activeDataset[0].topEngine : "N/A";
     document.getElementById("kpi-active-variant").textContent = activeStrategy === "variant_a" ? "Variant A" : "Variant B";
-}
-
-function getFilteredData() {
-    let result = [...activeDataset];
-
-    const query = searchInput.value.toLowerCase().trim();
-    if (query !== "") {
-        result = result.filter(item => 
-            item.contentType.toLowerCase().includes(query) || 
-            item.category.toLowerCase().includes(query) ||
-            (item.topEngine && item.topEngine.toLowerCase().includes(query)) ||
-            item.profile.toLowerCase().includes(query)
-        );
-    }
-
-    if (selectedFilterProfile !== "all") {
-        result = result.filter(item => item.profile === selectedFilterProfile);
-    }
-
-    return result;
 }
 
 function renderFilterPills() {
@@ -408,6 +359,8 @@ function renderFilterPills() {
 
 function renderMainViews() {
     const filtered = getFilteredData();
+    const gridPanel = document.getElementById("grid-view-panel");
+    const tableBody = document.getElementById("table-body");
 
     // 1. Grid View
     gridPanel.innerHTML = "";
@@ -426,6 +379,7 @@ function renderMainViews() {
 
             const engineFamily = getEngineFamily(item.topEngine);
             const familyClass = `badge-${engineFamily}`;
+            const metadata = getEngineMetadata(item.topEngine);
 
             let bucketsHTML = "";
             if (activeSource === "consensus" && item.routingsByBucket) {
@@ -456,17 +410,24 @@ function renderMainViews() {
                 `;
             }
 
+            const costBadge = metadata.cost === "$$$" ? "cost-premium" : metadata.cost === "$$" ? "cost-standard" : "cost-lite";
+            const latencyIcon = metadata.latency === "very-fast" ? "⚡" : metadata.latency === "fast" ? "⏱" : "⏲";
+
             card.innerHTML = `
                 <div class="card-top-row">
-                    <span class="card-category">${item.category}</span>
+                    <span class="card-category">${item.profile}</span>
                     <span class="glow-winner-badge ${familyClass}">${item.topEngine}</span>
                 </div>
                 <div class="card-title-section">
                     <h3 class="card-domain-name">${item.contentType}</h3>
                     <div class="card-metric-block">
                         <span class="card-score-value monospace-font">${item.topScore}%</span>
-                        <span class="card-confidence-badge conf-${item.profile.toLowerCase()}">${item.profile}</span>
+                        <span class="card-tier-badge tier-${metadata.tier}">${metadata.quality}</span>
                     </div>
+                </div>
+                <div class="card-metadata-row">
+                    <span class="metadata-item ${costBadge}">${metadata.cost} Cost</span>
+                    <span class="metadata-item latency-item">${latencyIcon} ${metadata.latency}</span>
                 </div>
                 <div class="card-mini-chart">
                     ${bucketsHTML}
@@ -496,6 +457,7 @@ function renderMainViews() {
 
             const engineFamily = getEngineFamily(item.topEngine);
             const familyClass = `badge-${engineFamily}`;
+            const metadata = getEngineMetadata(item.topEngine);
 
             let detailsHTML = "";
             if (activeSource === "consensus" && item.routingsByBucket) {
@@ -515,7 +477,7 @@ function renderMainViews() {
             row.innerHTML = `
                 <td>
                     <div class="tbl-domain-name">${item.contentType}</div>
-                    <div class="tbl-domain-category">${item.category}</div>
+                    <div class="tbl-domain-category">${metadata.quality}</div>
                 </td>
                 <td class="centered"><span class="card-confidence-badge conf-${item.profile.toLowerCase()}">${item.profile}</span></td>
                 <td class="tbl-score-cell">
@@ -525,7 +487,7 @@ function renderMainViews() {
                     </div>
                 </td>
                 <td class="tbl-score-cell">${detailsHTML}</td>
-                <td class="centered"><span class="glow-winner-badge ${familyClass}">${item.topEngine}</span></td>
+                <td class="centered"><span class="glow-winner-badge ${familyClass}">${metadata.cost}</span></td>
             `;
 
             row.addEventListener("mouseenter", (e) => triggerTooltip(e, item));
@@ -545,7 +507,7 @@ function renderMainViews() {
 }
 
 // ==========================================================================
-// 7. TOOLTIP ACTIONS
+// 8. TOOLTIP ACTIONS
 // ==========================================================================
 
 function triggerTooltip(e, item) {
@@ -563,11 +525,6 @@ function triggerTooltip(e, item) {
         tooltipModel.style.color = "#34D399";
         tooltipModel.style.border = "1px solid rgba(16, 185, 129, 0.3)";
         hoverTooltip.style.borderColor = "var(--color-gemini)";
-    } else {
-        tooltipModel.style.backgroundColor = "var(--color-tie-bg)";
-        tooltipModel.style.color = "#9CA3AF";
-        tooltipModel.style.border = "1px solid rgba(100, 116, 139, 0.3)";
-        hoverTooltip.style.borderColor = "var(--color-tie)";
     }
 
     hoverTooltip.classList.add("active");
@@ -596,7 +553,7 @@ function dismissTooltip() {
 }
 
 // ==========================================================================
-// 8. CANVAS CHART DRAWER
+// 9. CANVAS CHART DRAWER
 // ==========================================================================
 
 let canvasAnimFrame = null;
@@ -690,7 +647,7 @@ function triggerCanvasAnimation() {
 }
 
 // ==========================================================================
-// 9. STRATEGY VARIANT SWITCHER
+// 10. STRATEGY VARIANT SWITCHER
 // ==========================================================================
 
 function setupStrategyToggle() {
@@ -706,23 +663,24 @@ function setupStrategyToggle() {
 
             // Update description
             if (activeStrategy === "variant_a") {
-                strategyDesc.innerHTML = `<p><strong>Variant A:</strong> Standard tier assignments emphasizing legal, medical, and formal domains in Quality profile.</p>`;
+                strategyDesc.innerHTML = `<p><strong>Variant A (Standard):</strong> Quality tier includes Legal, Medical, Patents, Military, Religion, Security domains. Speed tier focuses on Networks, Software UI, Sports, Telecommunications.</p>`;
             } else {
-                strategyDesc.innerHTML = `<p><strong>Variant B:</strong> Extended Quality coverage includes Nursing, Patient Education, Physical Therapy, Veterinary, and Software UA.</p>`;
+                strategyDesc.innerHTML = `<p><strong>Variant B (Extended Quality):</strong> Adds Nursing, Patient Education, Physical Therapy, Veterinary Medicine, and Software UA to Quality tier for medical/healthcare emphasis.</p>`;
             }
 
             // Reprocess data with new strategy
-            processRoutingData();
-            activeDataset = pipelineData[activeSource] || [];
+            activeDataset = activeSource === "consensus" 
+                ? generateRoutingDataset() 
+                : generateRoutingDataset(activeSource);
+            
             selectedFilterProfile = "all";
-
             updateViewport();
         });
     });
 }
 
 // ==========================================================================
-// 10. VIEW TRANSITIONS & TABS
+// 11. VIEW TRANSITIONS & TABS
 // ==========================================================================
 
 function updateViewport() {
@@ -749,9 +707,15 @@ function setupTabsAndSelectors() {
             positionIndicator(tab);
 
             activeSource = tab.getAttribute("data-source");
-            activeDataset = pipelineData[activeSource] || [];
+            
+            // Generate data for selected bucket
+            if (activeSource === "consensus") {
+                activeDataset = generateRoutingDataset();
+            } else {
+                activeDataset = generateRoutingDataset(activeSource);
+            }
+            
             selectedFilterProfile = "all";
-
             updateViewport();
         });
     });
@@ -798,18 +762,20 @@ function initializeLiveDate() {
 }
 
 function setupSearch() {
-    searchInput.addEventListener("input", () => {
-        renderMainViews();
-    });
+    const searchInput = document.getElementById("search-input");
+    if (searchInput) {
+        searchInput.addEventListener("input", () => {
+            renderMainViews();
+        });
+    }
 }
 
 // ==========================================================================
-// 11. APP BOOTSTRAPPING
+// 12. APP BOOTSTRAPPING
 // ==========================================================================
 
 window.addEventListener("DOMContentLoaded", () => {
-    processRoutingData();
-    activeDataset = pipelineData.consensus;
+    activeDataset = generateRoutingDataset();
     
     initializeLiveDate();
     setupStrategyToggle();
