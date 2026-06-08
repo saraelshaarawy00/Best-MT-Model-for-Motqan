@@ -1,156 +1,105 @@
 /**
  * MT Model Intelligence Report — Arabic Localization
  * SaaS Dashboard Controller & Data Pipeline
+ * 
+ * NEW ARCHITECTURE:
+ * Content Type -> Translation Profile -> Language Bucket -> Engine Selection
  */
 
 // ==========================================================================
-// 1. RAW DATA STRUCTURES
+// 1. ROUTING CONFIGURATION - NEW ARCHITECTURE
 // ==========================================================================
 
-const CLAUDE_RAW = [
-    { type: "General", rank1: { model: "GPT-5.5", score: 38 }, rank2: { model: "GPT-5.4", score: 30 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "General Science", rank1: { model: "GPT-5.5 Pro", score: 45 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "Gemini 3.1 Pro", score: 18 } },
-    { type: "Heavy Machinery", rank1: { model: "GPT-5.5 Pro", score: 50 }, rank2: { model: "Gemini 3.1 Pro", score: 28 }, rank3: { model: "GPT-5.5", score: 15 } },
-    { type: "Hospitality Services", rank1: { model: "Gemini 3.1 Pro", score: 40 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "GPT-5.4", score: 22 } },
-    { type: "Information Technology", rank1: { model: "GPT-5.5 Pro", score: 42 }, rank2: { model: "GPT-5.4 Mini", score: 28 }, rank3: { model: "GPT-5.5", score: 20 } },
-    { type: "Insurance", rank1: { model: "GPT-5.5 Pro", score: 52 }, rank2: { model: "GPT-5.5", score: 28 }, rank3: { model: "GPT-5.4 Mini", score: 13 } },
-    { type: "Legal", rank1: { model: "GPT-5.5 Pro", score: 62 }, rank2: { model: "GPT-5.5", score: 25 }, rank3: { model: "Gemini 3.1 Pro", score: 9 } },
-    { type: "Life Science", rank1: { model: "GPT-5.5 Pro", score: 50 }, rank2: { model: "Gemini 3.1 Pro", score: 30 }, rank3: { model: "GPT-5.5", score: 14 } },
-    { type: "Literature", rank1: { model: "Gemini 3.1 Pro", score: 48 }, rank2: { model: "GPT-5.5", score: 28 }, rank3: { model: "GPT-5.5 Pro", score: 16 } },
-    { type: "Manufacturing", rank1: { model: "GPT-5.5 Pro", score: 45 }, rank2: { model: "Gemini 3.1 Pro", score: 28 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "Marketing & Advertising", rank1: { model: "Gemini 3.1 Pro", score: 44 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "GPT-5.4", score: 18 } },
-    { type: "Medical & Healthcare", rank1: { model: "GPT-5.5 Pro", score: 55 }, rank2: { model: "Gemini 3.1 Pro", score: 26 }, rank3: { model: "GPT-5.5", score: 14 } },
-    { type: "Medical Devices & Instruments", rank1: { model: "GPT-5.5 Pro", score: 58 }, rank2: { model: "GPT-5.5", score: 22 }, rank3: { model: "Gemini 3.1 Pro", score: 14 } },
-    { type: "Medicine", rank1: { model: "GPT-5.5 Pro", score: 56 }, rank2: { model: "Gemini 3.1 Pro", score: 28 }, rank3: { model: "GPT-5.5", score: 12 } },
-    { type: "Military & Defense", rank1: { model: "GPT-5.5 Pro", score: 55 }, rank2: { model: "GPT-5.5", score: 28 }, rank3: { model: "Gemini 3.1 Pro", score: 12 } },
-    { type: "Mining & Petroleum", rank1: { model: "GPT-5.5 Pro", score: 48 }, rank2: { model: "Gemini 3.1 Pro", score: 30 }, rank3: { model: "Gemini 3 Flash", score: 16 } },
-    { type: "Networks", rank1: { model: "GPT-5.5 Pro", score: 44 }, rank2: { model: "GPT-5.4 Mini", score: 28 }, rank3: { model: "GPT-5.5", score: 20 } },
-    { type: "NGOs", rank1: { model: "Gemini 3.1 Pro", score: 42 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "GPT-5.4", score: 18 } },
-    { type: "Nursing", rank1: { model: "GPT-5.5 Pro", score: 52 }, rank2: { model: "GPT-5.5", score: 26 }, rank3: { model: "Gemini 3.1 Pro", score: 14 } },
-    { type: "Other", rank1: { model: "GPT-5.4", score: 35 }, rank2: { model: "GPT-5.5", score: 32 }, rank3: { model: "Gemini 3 Flash", score: 22 } },
-    { type: "Patents", rank1: { model: "GPT-5.5 Pro", score: 65 }, rank2: { model: "GPT-5.5", score: 20 }, rank3: { model: "Gemini 3.1 Pro", score: 12 } },
-    { type: "Patient Education", rank1: { model: "GPT-5.5", score: 40 }, rank2: { model: "GPT-5.5 Pro", score: 30 }, rank3: { model: "Gemini 3.1 Pro", score: 22 } },
-    { type: "Pharmaceuticals", rank1: { model: "GPT-5.5 Pro", score: 58 }, rank2: { model: "Gemini 3.1 Pro", score: 24 }, rank3: { model: "GPT-5.5", score: 14 } },
-    { type: "Physical Therapy", rank1: { model: "GPT-5.5 Pro", score: 48 }, rank2: { model: "Gemini 3.1 Pro", score: 30 }, rank3: { model: "GPT-5.5", score: 16 } },
-    { type: "Publishing, Printing & Packaging", rank1: { model: "GPT-5.5", score: 38 }, rank2: { model: "GPT-5.4 Mini", score: 30 }, rank3: { model: "GPT-5.4", score: 22 } },
-    { type: "Real Estate & Properties", rank1: { model: "Gemini 3.1 Pro", score: 40 }, rank2: { model: "GPT-5.4", score: 30 }, rank3: { model: "GPT-5.5", score: 20 } },
-    { type: "Religion & Religious Studies", rank1: { model: "Gemini 3.1 Pro", score: 60 }, rank2: { model: "GPT-5.5", score: 22 }, rank3: { model: "GPT-5.5 Pro", score: 12 } },
-    { type: "Security & International Affairs", rank1: { model: "GPT-5.5 Pro", score: 52 }, rank2: { model: "GPT-5.5", score: 28 }, rank3: { model: "Gemini 3.1 Pro", score: 14 } },
-    { type: "Shipping & Maritime", rank1: { model: "GPT-5.5 Pro", score: 50 }, rank2: { model: "Gemini 3.1 Pro", score: 26 }, rank3: { model: "Gemini 3 Flash", score: 18 } },
-    { type: "Social & Human Services", rank1: { model: "Gemini 3.1 Pro", score: 42 }, rank2: { model: "GPT-5.5", score: 28 }, rank3: { model: "GPT-5.4", score: 20 } },
-    { type: "Software UA", rank1: { model: "GPT-5.5 Pro", score: 44 }, rank2: { model: "GPT-5.5", score: 28 }, rank3: { model: "GPT-5.4 Mini", score: 20 } },
-    { type: "Software UI", rank1: { model: "GPT-5.5 Pro", score: 46 }, rank2: { model: "GPT-5.4 Mini", score: 28 }, rank3: { model: "GPT-5.5", score: 18 } },
-    { type: "Sports", rank1: { model: "Gemini 3.1 Pro", score: 42 }, rank2: { model: "GPT-5.4", score: 28 }, rank3: { model: "GPT-5.5", score: 20 } },
-    { type: "Technical & Scientific", rank1: { model: "GPT-5.5 Pro", score: 52 }, rank2: { model: "Gemini 3.1 Pro", score: 26 }, rank3: { model: "GPT-5.5", score: 16 } },
-    { type: "Telecommunications", rank1: { model: "GPT-5.5 Pro", score: 44 }, rank2: { model: "GPT-5.4 Mini", score: 26 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "Training & E-learning", rank1: { model: "Gemini 3.1 Pro", score: 40 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "GPT-5.4", score: 20 } },
-    { type: "Transportation & Logistics", rank1: { model: "GPT-5.5 Pro", score: 48 }, rank2: { model: "Gemini 3 Flash", score: 26 }, rank3: { model: "GPT-5.4 Mini", score: 18 } },
-    { type: "Veterinary Medicine", rank1: { model: "GPT-5.5 Pro", score: 54 }, rank2: { model: "Gemini 3.1 Pro", score: 26 }, rank3: { model: "GPT-5.5", score: 14 } },
-    { type: "Wholesale & Retail Trade", rank1: { model: "GPT-5.5", score: 38 }, rank2: { model: "GPT-5.4 Mini", score: 30 }, rank3: { model: "Gemini 3 Flash", score: 24 } }
-];
+/**
+ * STEP 1: Content Type -> Translation Profile Mapping
+ */
+const CONTENT_TYPE_TO_PROFILE = {
+    "General": "Balanced",
+    "General Science": "Quality",
+    "Heavy Machinery": "Quality",
+    "Hospitality Services": "Balanced",
+    "Information Technology": "Quality",
+    "Insurance": "Quality",
+    "Legal": "Quality",
+    "Life Science": "Quality",
+    "Literature": "Balanced",
+    "Manufacturing": "Quality",
+    "Marketing & Advertising": "Balanced",
+    "Medical & Healthcare": "Quality",
+    "Medical Devices & Instruments": "Quality",
+    "Medicine": "Quality",
+    "Military & Defense": "Quality",
+    "Mining & Petroleum": "Quality",
+    "Networks": "Quality",
+    "NGOs": "Balanced",
+    "Nursing": "Quality",
+    "Other": "Balanced",
+    "Patents": "Quality",
+    "Patient Education": "Balanced",
+    "Pharmaceuticals": "Quality",
+    "Physical Therapy": "Quality",
+    "Publishing, Printing & Packaging": "Balanced",
+    "Real Estate & Properties": "Balanced",
+    "Religion & Religious Studies": "Balanced",
+    "Security & International Affairs": "Quality",
+    "Shipping & Maritime": "Quality",
+    "Social & Human Services": "Balanced",
+    "Software UA": "Quality",
+    "Software UI": "Speed",
+    "Sports": "Speed",
+    "Technical & Scientific": "Quality",
+    "Telecommunications": "Quality",
+    "Training & E-learning": "Balanced",
+    "Transportation & Logistics": "Quality",
+    "Veterinary Medicine": "Quality",
+    "Wholesale & Retail Trade": "Balanced"
+};
 
-const CHATGPT_RAW = [
-    { type: "General", bestModel: "GPT-5.5", confidence: 98 },
-    { type: "General Science", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Heavy Machinery", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Hospitality Services", bestModel: "Gemini 3.1 Pro", confidence: 97 },
-    { type: "Information Technology", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Insurance", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Legal", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Life Science", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Literature", bestModel: "Gemini 3.1 Pro", confidence: 99 },
-    { type: "Manufacturing", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Marketing & Advertising", bestModel: "Gemini 3.1 Pro", confidence: 98 },
-    { type: "Medical & Healthcare", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Medical Devices & Instruments", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Medicine", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Military & Defense", bestModel: "GPT-5.5 Pro", confidence: 98 },
-    { type: "Mining & Petroleum", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Networks", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "NGOs", bestModel: "Gemini 3.1 Pro", confidence: 96 },
-    { type: "Nursing", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Other", bestModel: "GPT-5.5", confidence: 98 },
-    { type: "Patents", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Patient Education", bestModel: "GPT-5.5", confidence: 98 },
-    { type: "Pharmaceuticals", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Physical Therapy", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Publishing, Printing & Packaging", bestModel: "GPT-5.5", confidence: 97 },
-    { type: "Real Estate & Properties", bestModel: "GPT-5.5", confidence: 97 },
-    { type: "Religion & Religious Studies", bestModel: "Gemini 3.1 Pro", confidence: 97 },
-    { type: "Security & International Affairs", bestModel: "GPT-5.5 Pro", confidence: 98 },
-    { type: "Shipping & Maritime", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Social & Human Services", bestModel: "Gemini 3.1 Pro", confidence: 96 },
-    { type: "Software UA", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Software UI", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Sports", bestModel: "Gemini 3.1 Pro", confidence: 96 },
-    { type: "Technical & Scientific", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Telecommunications", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Training & E-learning", bestModel: "GPT-5.5", confidence: 97 },
-    { type: "Transportation & Logistics Services", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Veterinary Medicine", bestModel: "GPT-5.5 Pro", confidence: 99 },
-    { type: "Wholesale & Retail Trade", bestModel: "GPT-5.5", confidence: 97 }
-];
+/**
+ * STEP 2: Language Bucket Definitions
+ * Each bucket has mapped engines for each Translation Profile
+ */
+const LANGUAGE_BUCKETS = {
+    "RTL": {
+        "Quality": { engine: "GPT-5.5 Pro", score: 85 },
+        "Balanced": { engine: "GPT-5.5", score: 75 },
+        "Speed": { engine: "GPT-5.4 Mini", score: 65 }
+    },
+    "CJK": {
+        "Quality": { engine: "DeepSeek Premium", score: 88 },
+        "Balanced": { engine: "Gemini 3.1 Pro", score: 78 },
+        "Speed": { engine: "Gemini 3 Flash", score: 68 }
+    },
+    "European": {
+        "Quality": { engine: "GPT-5.5 Pro", score: 82 },
+        "Balanced": { engine: "Gemini 3.1 Pro", score: 76 },
+        "Speed": { engine: "GPT-5.4", score: 62 }
+    },
+    "Others": {
+        "Quality": { engine: "GPT-5.5", score: 80 },
+        "Balanced": { engine: "Gemini 3 Flash", score: 72 },
+        "Speed": { engine: "GPT-5.4 Mini", score: 60 }
+    }
+};
 
-const GEMINI_RAW = [
-    { type: "General", rank1: { model: "GPT-5.4", score: 40 }, rank2: { model: "Gemini 3 Flash", score: 40 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 20 } },
-    { type: "General science", rank1: { model: "Gemini 3.1 Pro", score: 45 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "heavy machinery", rank1: { model: "Gemini 3.1 Pro", score: 45 }, rank2: { model: "Gemini 3 Flash", score: 40 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "hospitality services", rank1: { model: "GPT-5.4", score: 45 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "information technology", rank1: { model: "GPT-5.4 Mini", score: 45 }, rank2: { model: "GPT-5.5", score: 40 }, rank3: { model: "Gemini 3 Flash", score: 15 } },
-    { type: "insurance", rank1: { model: "GPT-5.5 Pro", score: 45 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "GPT-5.4 Mini", score: 20 } },
-    { type: "legal", rank1: { model: "GPT-5.5 Pro", score: 60 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "Gemini 3.1 Pro", score: 10 } },
-    { type: "life science", rank1: { model: "GPT-5.5 Pro", score: 50 }, rank2: { model: "Gemini 3.1 Pro", score: 35 }, rank3: { model: "GPT-5.4 Mini", score: 15 } },
-    { type: "literature", rank1: { model: "GPT-5.5 Pro", score: 65 }, rank2: { model: "GPT-5.5", score: 25 }, rank3: { model: "GPT-5.4", score: 10 } },
-    { type: "manufacturing", rank1: { model: "Gemini 3 Flash", score: 50 }, rank2: { model: "Gemini 3.1 Pro", score: 35 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "marketing&advertising", rank1: { model: "GPT-5.5", score: 55 }, rank2: { model: "GPT-5.4", score: 30 }, rank3: { model: "Gemini 3 Flash", score: 15 } },
-    { type: "medical & healthcare", rank1: { model: "Gemini 3.1 Pro", score: 45 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "medical devices & instruments", rank1: { model: "GPT-5.5", score: 40 }, rank2: { model: "Gemini 3.1 Pro", score: 40 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "medicine", rank1: { model: "Gemini 3.1 Pro", score: 55 }, rank2: { model: "GPT-5.5 Pro", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 10 } },
-    { type: "military & defense", rank1: { model: "GPT-5.5 Pro", score: 50 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "Gemini 3.1 Pro", score: 15 } },
-    { type: "mining & petroleum", rank1: { model: "Gemini 3.1 Pro", score: 45 }, rank2: { model: "Gemini 3 Flash", score: 40 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "networks", rank1: { model: "GPT-5.4 Mini", score: 50 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 15 } },
-    { type: "NGOs", rank1: { model: "GPT-5.5", score: 45 }, rank2: { model: "GPT-5.4", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "nursing", rank1: { model: "GPT-5.5", score: 45 }, rank2: { model: "GPT-5.4", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "other", rank1: { model: "GPT-5.4 Mini", score: 40 }, rank2: { model: "Gemini 3 Flash", score: 40 }, rank3: { model: "GPT-5.4 Nano", score: 20 } },
-    { type: "patents", rank1: { model: "Gemini 3.1 Pro", score: 65 }, rank2: { model: "GPT-5.5", score: 25 }, rank3: { model: "Gemini 3 Flash", score: 10 } },
-    { type: "patients education", rank1: { model: "GPT-5.5", score: 55 }, rank2: { model: "GPT-5.4 Mini", score: 30 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "pharmaceuticals", rank1: { model: "GPT-5.5 Pro", score: 50 }, rank2: { model: "Gemini 3.1 Pro", score: 40 }, rank3: { model: "GPT-5.4 Mini", score: 10 } },
-    { type: "physical therapy", rank1: { model: "Gemini 3.1 Pro", score: 50 }, rank2: { model: "GPT-5.4", score: 30 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "publishing, printing&packaging", rank1: { model: "GPT-5.4 Mini", score: 50 }, rank2: { model: "GPT-5.4", score: 35 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "real estate&properties", rank1: { model: "GPT-5.4", score: 50 }, rank2: { model: "Gemini 3 Flash", score: 35 }, rank3: { model: "GPT-5.4 Nano", score: 15 } },
-    { type: "religion&religious studies", rank1: { model: "Gemini 3.1 Pro", score: 60 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "Gemini 3 Flash", score: 10 } },
-    { type: "security &international affairs", rank1: { model: "GPT-5.5 Pro", score: 55 }, rank2: { model: "GPT-5.5", score: 30 }, rank3: { model: "Gemini 3.1 Pro", score: 15 } },
-    { type: "shipping &maritime", rank1: { model: "Gemini 3 Flash", score: 55 }, rank2: { model: "Gemini 3.1 Pro", score: 30 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "social & human services", rank1: { model: "GPT-5.5", score: 50 }, rank2: { model: "GPT-5.4", score: 35 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "software UA", rank1: { model: "GPT-5.5", score: 45 }, rank2: { model: "GPT-5.4 Mini", score: 40 }, rank3: { model: "Gemini 3 Flash", score: 15 } },
-    { type: "Software UI", rank1: { model: "GPT-5.4 Mini", score: 60 }, rank2: { model: "GPT-5.5", score: 25 }, rank3: { model: "GPT-5.4 Nano", score: 15 } },
-    { type: "Sports", rank1: { model: "GPT-5.4", score: 50 }, rank2: { model: "GPT-5 Mini", score: 35 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 15 } },
-    { type: "technical &scientific", rank1: { model: "Gemini 3.1 Pro", score: 45 }, rank2: { model: "GPT-5.5", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 20 } },
-    { type: "telecommunications", rank1: { model: "GPT-5.4 Mini", score: 40 }, rank2: { model: "Gemini 3 Flash", score: 40 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 20 } },
-    { type: "training & e-learning", rank1: { model: "GPT-5.5", score: 50 }, rank2: { model: "GPT-5.4", score: 35 }, rank3: { model: "Gemini 3 Flash", score: 15 } },
-    { type: "transportation & logistics services", rank1: { model: "Gemini 3 Flash", score: 55 }, rank2: { model: "GPT-5.4 Mini", score: 25 }, rank3: { model: "Gemini 3.1 Flash Lite", score: 20 } },
-    { type: "veterinary medicine", rank1: { model: "Gemini 3.1 Pro", score: 50 }, rank2: { model: "Gemini 3 Flash", score: 35 }, rank3: { model: "GPT-5.4 Mini", score: 15 } },
-    { type: "wholesale &retail trade", rank1: { model: "GPT-5.4 Mini", score: 45 }, rank2: { model: "Gemini 3 Flash", score: 40 }, rank3: { model: "GPT-5.4 Nano", score: 15 } }
-];
+/**
+ * Available language buckets for user selection
+ */
+const AVAILABLE_LANGUAGE_BUCKETS = ["RTL", "CJK", "European", "Others"];
+
+/**
+ * Translation Profile descriptions
+ */
+const PROFILE_DESCRIPTIONS = {
+    "Quality": "Maximum accuracy & compliance. Prioritizes precision over speed. Best for legal, medical, technical content.",
+    "Balanced": "Equilibrium between speed and quality. Suitable for marketing, creative, general content.",
+    "Speed": "Fast turnaround with acceptable quality. For UI strings, sports commentary, time-sensitive content."
+};
 
 // ==========================================================================
-// 2. MODEL CONFIGURATION
+// 2. DOMAIN CATEGORIES (RETAINED FOR UI GROUPING)
 // ==========================================================================
 
-const ALL_MODELS = [
-    "GPT-5.5 Pro", "GPT-5.5", "GPT-5.4", "GPT-5.4 Mini", "GPT-5.4 Nano", "GPT-5 Mini",
-    "Gemini 3.1 Pro", "Gemini 3 Flash", "Gemini 3.1 Flash Lite"
-];
-
-function isGptFamily(model) {
-    return model && model.startsWith("GPT");
-}
-
-function isGeminiFamily(model) {
-    return model && model.startsWith("Gemini");
-}
-
-// Category mappings for SaaS grid grouping
 const DOMAIN_CATEGORIES = {
     "General": "General & Fallbacks",
     "Other": "General & Fallbacks",
@@ -193,102 +142,135 @@ const DOMAIN_CATEGORIES = {
     "Military & Defense": "Legal, Corporate & Logistics"
 };
 
-// Rich localization rationales tailored for C-suite presenting
-const LOCALIZATION_INSIGHTS = {
-    "General": "Focuses on conversational fluency and broad vocabulary adaptation where GPT models lead in syntax coherence.",
-    "General Science": "Requires precise terminology and LaTeX/notation awareness. GPT-5.5 Pro leads in peer-review standards.",
-    "Heavy Machinery": "Technical parts catalogs demand strict glossary consistency. Gemini Pro matches specialized engineering indexes.",
-    "Hospitality Services": "Conversational warmth and localized tone are key; Gemini handles Arabic polite register naturally.",
-    "Information Technology": "Code-adjacent texts, API docs, and tags; GPT models prevent corruption of code tokens.",
-    "Insurance": "Requires regulatory phrasing and policy terms. GPT-5.5 Pro handles complex nested legal clauses.",
-    "Legal": "Zero tolerance for ambiguity in contracts. GPT-5.5 Pro matches formal legal registers with high precision.",
-    "Life Science": "Deals with taxonomy and peer-review language. GPT-5.5 Pro outperforms in compliance metrics.",
-    "Literature": "Style, idioms, and rhythmic prose; Gemini's generative depth captures creative nuance best.",
-    "Manufacturing": "Procedural instructions and safety guidelines; Gemini mapping is highly efficient for repetitive scripts.",
-    "Marketing & Advertising": "Transcreation and cultural slogans; Gemini excels in creative copywriting and emotional impact.",
-    "Medical & Healthcare": "Clinical records and diagnostic precision; GPT-5.5 Pro shows the lowest hallucination rate.",
-    "Medical Devices & Instruments": "Hardware user manuals and interface strings; GPT-5.5 Pro excels at token length constraints.",
-    "Medicine": "Pharmacological and anatomical terms; Gemini leverages deep medical corpus datasets.",
-    "Military & Defense": "Geopolitical sensitivity and tactical terms; GPT-5.5 Pro preserves security registers with high precision.",
-    "Mining & Petroleum": "Geological vocabulary and operational logs; Gemini Pro utilizes wide earth-science data graphs.",
-    "Networks": "Protocol documents and config syntax; GPT-5.4 Mini handles code-adjacent text efficiently.",
-    "NGOs": "Humanitarian advocacy and report narratives; Gemini maintains an accessible, empathetic tone.",
-    "Nursing": "Clinical care guidelines and patient interactions; GPT-5.5 Pro provides accurate procedure translation.",
-    "Other": "Mixed unstructured domain signals where general fluency scores are highly tied.",
-    "Patents": "Formulaic claims structure and legal binding; Gemini 3.1 Pro provides literal sentence mapping.",
-    "Patient Education": "Requires translating medical terms to a layperson register; GPT-5.5 adapts reading levels flawlessly.",
-    "Pharmaceuticals": "Dosage labels and pharmacokinetics reports; GPT-5.5 Pro is preferred for strict instruction compliance.",
-    "Physical Therapy": "Anatomical movements and muscular terms; Gemini Pro's specialized vocabulary dominates.",
-    "Publishing, Printing & Packaging": "Text length limitations to prevent packaging overflow; GPT-5.4 Mini meets constraints best.",
-    "Real Estate & Properties": "Descriptive sales pitch combined with legal leasing clauses; GPT models balance tone and accuracy.",
-    "Religion & Religious Studies": "Classical Arabic and theological texts; Gemini Pro's massive historic multilingual corpus leads.",
-    "Security & International Affairs": "Geopolitical diplomacy register; GPT-5.5 Pro handles delicate diplomatic contexts with high reliability.",
-    "Shipping & Maritime": "International customs codes and port logs; Gemini Flash handles structured logistics registries.",
-    "Social & Human Services": "Accessible community outreach copy; Gemini handles conversational social work register naturally.",
-    "Software UA": "User assistance help files; GPT-5.5 Pro maintains instruction flow and screenshot alignments.",
-    "Software UI": "Extremely tight button and menu constraints; GPT-5.4 Mini optimizes text length to prevent clipping.",
-    "Sports": "Sports commentary and live event slang; GPT-5.4 captures idiomatic pacing and energetic tone.",
-    "Technical & Scientific": "Data-dense tables and measurement metrics; Gemini Pro ensures safe alignments of formula values.",
-    "Telecommunications": "Standards protocols and frequency documentation; GPT-5.4 Mini handles global telecom terms accurately.",
-    "Training & E-learning": "Pedagogical materials and slide decks; GPT-5.5 reads naturally like an online educator.",
-    "Transportation & Logistics": "Routing registries and shipping manifests; Gemini Flash maps transport directories efficiently.",
-    "Veterinary Medicine": "Animal anatomical terms and diagnosis; Gemini Pro utilizes wider biological data nodes.",
-    "Wholesale & Retail Trade": "E-commerce product descriptions; GPT-5.4 Mini outputs persuasive, consumer-friendly copy."
-};
+// ==========================================================================
+// 3. NEW ROUTING ENGINE & SIMULATOR
+// ==========================================================================
+
+/**
+ * Route a Content Type + Language Bucket combination to the optimal engine
+ */
+function routeTranslation(contentType, languageBucket) {
+    const profile = CONTENT_TYPE_TO_PROFILE[contentType] || "Balanced";
+    const engineData = LANGUAGE_BUCKETS[languageBucket][profile];
+    
+    if (!engineData) {
+        return { engine: "N/A", score: 0, profile, bucket: languageBucket };
+    }
+    
+    return {
+        engine: engineData.engine,
+        score: engineData.score,
+        profile,
+        bucket: languageBucket,
+        description: PROFILE_DESCRIPTIONS[profile]
+    };
+}
+
+/**
+ * Simulate routing for all Content Types across a Language Bucket
+ */
+function simulateLanguageBucketRouting(languageBucket) {
+    return Object.keys(CONTENT_TYPE_TO_PROFILE).map(contentType => {
+        const routing = routeTranslation(contentType, languageBucket);
+        return {
+            contentType,
+            category: DOMAIN_CATEGORIES[contentType] || "Other",
+            profile: routing.profile,
+            bucket: routing.bucket,
+            engine: routing.engine,
+            score: routing.score,
+            topEngine: routing.engine,
+            topScore: routing.score,
+            rationale: routing.description
+        };
+    });
+}
+
+/**
+ * Generate consensus across all language buckets
+ */
+function generateConsensusRouting() {
+    const masterContentTypes = Object.keys(CONTENT_TYPE_TO_PROFILE);
+    
+    return masterContentTypes.map(contentType => {
+        const profile = CONTENT_TYPE_TO_PROFILE[contentType];
+        const routingsByBucket = {};
+        
+        AVAILABLE_LANGUAGE_BUCKETS.forEach(bucket => {
+            const engineData = LANGUAGE_BUCKETS[bucket][profile];
+            routingsByBucket[bucket] = {
+                engine: engineData.engine,
+                score: engineData.score
+            };
+        });
+        
+        let topScore = 0;
+        let topEngine = "N/A";
+        Object.values(routingsByBucket).forEach(routing => {
+            if (routing.score > topScore) {
+                topScore = routing.score;
+                topEngine = routing.engine;
+            }
+        });
+        
+        return {
+            contentType,
+            category: DOMAIN_CATEGORIES[contentType] || "Other",
+            profile,
+            routingsByBucket,
+            topEngine,
+            topScore,
+            rationale: PROFILE_DESCRIPTIONS[profile]
+        };
+    });
+}
 
 // ==========================================================================
-// 3. PIPELINE CONTROLLER
+// 4. UI STATE & PIPELINE MANAGEMENT
 // ==========================================================================
 
 let activeSource = "consensus";
-let viewMode = "grid"; // grid or table
-let selectedFilterModel = "all";
+let viewMode = "grid";
+let selectedFilterProfile = "all";
 
 const pipelineData = {
-    claude: [],
-    chatgpt: [],
-    gemini: [],
-    consensus: []
+    consensus: [],
+    RTL: [],
+    CJK: [],
+    European: [],
+    Others: []
 };
 
-// Master Content Type Spellings
 const MASTER_CONTENT_TYPES = Object.keys(DOMAIN_CATEGORIES);
 
 function getNormalizedType(type) {
     const raw = type.trim().toLowerCase();
     
-    if (raw === "transportation & logistics services" || raw === "transportation & logistics") {
-        return "Transportation & Logistics";
-    }
-    if (raw === "patients education" || raw === "patient education" || raw === "patients education") {
-        return "Patient Education";
-    }
-    if (raw === "marketing&advertising" || raw === "marketing & advertising") {
-        return "Marketing & Advertising";
-    }
-    if (raw === "publishing, printing&packaging" || raw === "publishing, printing & packaging") {
-        return "Publishing, Printing & Packaging";
-    }
-    if (raw === "real estate&properties" || raw === "real estate & properties") {
-        return "Real Estate & Properties";
-    }
-    if (raw === "religion&religious studies" || raw === "religion & religious studies") {
-        return "Religion & Religious Studies";
-    }
-    if (raw === "security &international affairs" || raw === "security & international affairs") {
-        return "Security & International Affairs";
-    }
-    if (raw === "shipping &maritime" || raw === "shipping & maritime") {
-        return "Shipping & Maritime";
-    }
-    if (raw === "wholesale &retail trade" || raw === "wholesale & retail trade") {
-        return "Wholesale & Retail Trade";
-    }
-    if (raw === "technical &scientific" || raw === "technical & scientific") {
-        return "Technical & Scientific";
-    }
+    const normalizations = {
+        "transportation & logistics services": "Transportation & Logistics",
+        "transportation & logistics": "Transportation & Logistics",
+        "patients education": "Patient Education",
+        "patient education": "Patient Education",
+        "marketing&advertising": "Marketing & Advertising",
+        "marketing & advertising": "Marketing & Advertising",
+        "publishing, printing&packaging": "Publishing, Printing & Packaging",
+        "publishing, printing & packaging": "Publishing, Printing & Packaging",
+        "real estate&properties": "Real Estate & Properties",
+        "real estate & properties": "Real Estate & Properties",
+        "religion&religious studies": "Religion & Religious Studies",
+        "religion & religious studies": "Religion & Religious Studies",
+        "security &international affairs": "Security & International Affairs",
+        "security & international affairs": "Security & International Affairs",
+        "shipping &maritime": "Shipping & Maritime",
+        "shipping & maritime": "Shipping & Maritime",
+        "wholesale &retail trade": "Wholesale & Retail Trade",
+        "wholesale & retail trade": "Wholesale & Retail Trade",
+        "technical &scientific": "Technical & Scientific",
+        "technical & scientific": "Technical & Scientific"
+    };
     
-    // Find case insensitive match in master types
+    if (normalizations[raw]) return normalizations[raw];
+    
     for (const master of MASTER_CONTENT_TYPES) {
         if (master.toLowerCase() === raw) {
             return master;
@@ -297,142 +279,16 @@ function getNormalizedType(type) {
     return type;
 }
 
-// Convert Rank 1 scores into Win classifications
-function getConfidenceRating(score) {
-    if (score >= 50) return "HIGH";
-    if (score >= 40) return "MEDIUM";
-    return "SPLIT";
-}
-
-function processRawData() {
-    // 1. Process Claude Data
-    pipelineData.claude = MASTER_CONTENT_TYPES.map(typeName => {
-        const item = CLAUDE_RAW.find(x => getNormalizedType(x.type) === typeName);
-        const r1 = item ? item.rank1 : { model: "N/A", score: 0 };
-        const r2 = item ? item.rank2 : { model: "N/A", score: 0 };
-        const r3 = item ? item.rank3 : { model: "N/A", score: 0 };
-        
-        return {
-            contentType: typeName,
-            category: DOMAIN_CATEGORIES[typeName] || "Other",
-            rank1: r1,
-            rank2: r2,
-            rank3: r3,
-            winner: r1.model,
-            confidence: getConfidenceRating(r1.score),
-            rationale: LOCALIZATION_INSIGHTS[typeName] || "No localization analysis compiled."
-        };
-    });
-
-    // 2. Process ChatGPT Data
-    pipelineData.chatgpt = MASTER_CONTENT_TYPES.map(typeName => {
-        const item = CHATGPT_RAW.find(x => getNormalizedType(x.type) === typeName);
-        const modelName = item ? item.bestModel : "N/A";
-        const scoreVal = item ? item.confidence : 0;
-        
-        return {
-            contentType: typeName,
-            category: DOMAIN_CATEGORIES[typeName] || "Other",
-            rank1: { model: modelName, score: scoreVal },
-            rank2: { model: "N/A", score: 0 },
-            rank3: { model: "N/A", score: 0 },
-            winner: modelName,
-            confidence: getConfidenceRating(scoreVal),
-            rationale: LOCALIZATION_INSIGHTS[typeName] || "No localization analysis compiled."
-        };
-    });
-
-    // 3. Process Gemini Data
-    pipelineData.gemini = MASTER_CONTENT_TYPES.map(typeName => {
-        const item = GEMINI_RAW.find(x => getNormalizedType(x.type) === typeName);
-        const r1 = item ? item.rank1 : { model: "N/A", score: 0 };
-        const r2 = item ? item.rank2 : { model: "N/A", score: 0 };
-        const r3 = item ? item.rank3 : { model: "N/A", score: 0 };
-
-        // Normalize Gemini's "GPT-5 Mini" to "GPT-5 Mini" (which is one of our 9 models)
-        if (r1.model === "GPT-5 Mini") r1.model = "GPT-5 Mini";
-        if (r2.model === "GPT-5 Mini") r2.model = "GPT-5 Mini";
-        if (r3.model === "GPT-5 Mini") r3.model = "GPT-5 Mini";
-
-        return {
-            contentType: typeName,
-            category: DOMAIN_CATEGORIES[typeName] || "Other",
-            rank1: r1,
-            rank2: r2,
-            rank3: r3,
-            winner: r1.model,
-            confidence: getConfidenceRating(r1.score),
-            rationale: LOCALIZATION_INSIGHTS[typeName] || "No localization analysis compiled."
-        };
-    });
-
-    // 4. Calculate Consensus Data (Dynamic Convergence)
-    pipelineData.consensus = MASTER_CONTENT_TYPES.map(typeName => {
-        const cl = pipelineData.claude.find(x => x.contentType === typeName);
-        const ch = pipelineData.chatgpt.find(x => x.contentType === typeName);
-        const ge = pipelineData.gemini.find(x => x.contentType === typeName);
-
-        // Winner determined strictly by averaging Rank-1 scores across all 3 sources
-        const rank1Scores = {};
-        ALL_MODELS.forEach(m => rank1Scores[m] = 0);
-        
-        if (cl && cl.rank1 && cl.rank1.model !== "N/A") rank1Scores[cl.rank1.model] += cl.rank1.score;
-        if (ch && ch.rank1 && ch.rank1.model !== "N/A") rank1Scores[ch.rank1.model] += ch.rank1.score;
-        if (ge && ge.rank1 && ge.rank1.model !== "N/A") rank1Scores[ge.rank1.model] += ge.rank1.score;
-
-        let maxRank1Avg = -1;
-        let rank1Winner = "Tie";
-        ALL_MODELS.forEach(m => {
-            const avg = rank1Scores[m] / 3;
-            if (avg > maxRank1Avg) {
-                maxRank1Avg = avg;
-                rank1Winner = m;
-            } else if (avg === maxRank1Avg && avg > 0) {
-                rank1Winner = "Tie";
-            }
-        });
-
-        // Compute average scores of ALL models across ALL ranks to populate Rank 1, 2, and 3 columns
-        const modelSums = {};
-        ALL_MODELS.forEach(m => modelSums[m] = 0);
-
-        const addScores = (sourceObj) => {
-            if (!sourceObj) return;
-            if (sourceObj.rank1 && sourceObj.rank1.model !== "N/A") modelSums[sourceObj.rank1.model] += sourceObj.rank1.score;
-            if (sourceObj.rank2 && sourceObj.rank2.model !== "N/A") modelSums[sourceObj.rank2.model] += sourceObj.rank2.score;
-            if (sourceObj.rank3 && sourceObj.rank3.model !== "N/A") modelSums[sourceObj.rank3.model] += sourceObj.rank3.score;
-        };
-
-        addScores(cl);
-        addScores(ch);
-        addScores(ge);
-
-        const sortedAverages = ALL_MODELS.map(m => ({
-            model: m,
-            score: Math.round(modelSums[m] / 3)
-        })).sort((a, b) => b.score - a.score);
-
-        // Fallback winner if rank-1 calculations tied
-        let winnerModel = rank1Winner;
-        if (winnerModel === "Tie" || winnerModel === "N/A") {
-            winnerModel = sortedAverages[0].model;
-        }
-
-        return {
-            contentType: typeName,
-            category: DOMAIN_CATEGORIES[typeName] || "Other",
-            rank1: sortedAverages[0].score > 0 ? sortedAverages[0] : { model: "N/A", score: 0 },
-            rank2: sortedAverages[1].score > 0 ? sortedAverages[1] : { model: "N/A", score: 0 },
-            rank3: sortedAverages[2].score > 0 ? sortedAverages[2] : { model: "N/A", score: 0 },
-            winner: winnerModel,
-            confidence: getConfidenceRating(sortedAverages[0].score),
-            rationale: LOCALIZATION_INSIGHTS[typeName] || "No localization analysis compiled."
-        };
+function processRoutingData() {
+    pipelineData.consensus = generateConsensusRouting();
+    
+    AVAILABLE_LANGUAGE_BUCKETS.forEach(bucket => {
+        pipelineData[bucket] = simulateLanguageBucketRouting(bucket);
     });
 }
 
 // ==========================================================================
-// 4. UI DRAWING & RENDER ENGINE
+// 5. UI RENDERING ENGINE
 // ==========================================================================
 
 const searchInput = document.getElementById("search-input");
@@ -444,117 +300,108 @@ const tooltipText = document.getElementById("tooltip-desc-text");
 
 let activeDataset = [];
 
-// Aggregate current dataset metrics to update KPI strip
-function renderKPIs() {
-    let gptWins = 0;
-    let geminiWins = 0;
-    let maxScore = 0;
-    let sumLeaderScore = 0;
-    const modelWinCounts = {};
-
-    ALL_MODELS.forEach(m => modelWinCounts[m] = 0);
-
-    activeDataset.forEach(item => {
-        const topModel = item.rank1.model;
-        const topScore = item.rank1.score;
-
-        // Win stats by Family
-        if (isGptFamily(item.winner)) gptWins++;
-        else if (isGeminiFamily(item.winner)) geminiWins++;
-
-        // Track model win counts
-        if (item.winner !== "N/A") {
-            modelWinCounts[item.winner] = (modelWinCounts[item.winner] || 0) + 1;
-        }
-
-        sumLeaderScore += topScore;
-        if (topScore > maxScore) maxScore = topScore;
-    });
-
-    // Animate KPI text value
-    document.getElementById("kpi-gpt-wins").textContent = gptWins;
-    document.getElementById("kpi-gemini-wins").textContent = geminiWins;
-    document.getElementById("kpi-max-score").textContent = maxScore + "%";
-    document.getElementById("kpi-avg-score").textContent = Math.round(sumLeaderScore / activeDataset.length) + "%";
-
-    // Find overall dominant model
-    let dominantModelName = "N/A";
-    let maxWins = -1;
-    ALL_MODELS.forEach(m => {
-        if (modelWinCounts[m] > maxWins) {
-            maxWins = modelWinCounts[m];
-            dominantModelName = m;
-        }
-    });
-    document.getElementById("kpi-dominant-model").textContent = dominantModelName;
+function isGptFamily(engine) {
+    return engine && engine.startsWith("GPT");
 }
 
-// Apply Filters & Search query
+function isGeminiFamily(engine) {
+    return engine && engine.startsWith("Gemini");
+}
+
+function isDeepSeekFamily(engine) {
+    return engine && engine.startsWith("DeepSeek");
+}
+
+function getEngineFamily(engine) {
+    if (isGptFamily(engine)) return "gpt";
+    if (isGeminiFamily(engine)) return "gemini";
+    if (isDeepSeekFamily(engine)) return "deepseek";
+    return "neutral";
+}
+
+function renderKPIs() {
+    let qualityCount = 0;
+    let balancedCount = 0;
+    let speedCount = 0;
+    let maxScore = 0;
+    let sumScore = 0;
+
+    activeDataset.forEach(item => {
+        if (item.profile === "Quality") qualityCount++;
+        else if (item.profile === "Balanced") balancedCount++;
+        else if (item.profile === "Speed") speedCount++;
+        
+        const score = item.topScore || 0;
+        if (score > maxScore) maxScore = score;
+        sumScore += score;
+    });
+
+    document.getElementById("kpi-gpt-wins").textContent = qualityCount;
+    document.getElementById("kpi-gemini-wins").textContent = balancedCount;
+    document.getElementById("kpi-max-score").textContent = maxScore + "%";
+    document.getElementById("kpi-avg-score").textContent = activeDataset.length > 0 ? Math.round(sumScore / activeDataset.length) + "%" : "0%";
+    document.getElementById("kpi-dominant-model").textContent = activeDataset.length > 0 ? activeDataset[0].topEngine : "N/A";
+}
+
 function getFilteredData() {
     let result = [...activeDataset];
 
-    // Search Input
     const query = searchInput.value.toLowerCase().trim();
     if (query !== "") {
         result = result.filter(item => 
             item.contentType.toLowerCase().includes(query) || 
             item.category.toLowerCase().includes(query) ||
-            item.winner.toLowerCase().includes(query)
+            (item.topEngine && item.topEngine.toLowerCase().includes(query)) ||
+            item.profile.toLowerCase().includes(query)
         );
     }
 
-    // Winner Pill Filter
-    if (selectedFilterModel !== "all") {
-        result = result.filter(item => item.winner === selectedFilterModel);
+    if (selectedFilterProfile !== "all") {
+        result = result.filter(item => item.profile === selectedFilterProfile);
     }
 
     return result;
 }
 
-// Render dynamic filter pills based on active dataset winners
 function renderFilterPills() {
     const container = document.getElementById("model-filter-pills");
     
-    // Find active unique winners in current dataset
-    const winners = new Set();
+    const profiles = new Set();
     activeDataset.forEach(item => {
-        if (item.winner && item.winner !== "N/A") winners.add(item.winner);
+        if (item.profile) profiles.add(item.profile);
     });
 
-    const sortedWinners = Array.from(winners).sort();
+    const sortedProfiles = ["Quality", "Balanced", "Speed"].filter(p => profiles.has(p));
 
-    let pillsHTML = `<button class="pill-btn ${selectedFilterModel === "all" ? "active" : ""}" data-model="all">All Models</button>`;
+    let pillsHTML = `<button class="pill-btn ${selectedFilterProfile === "all" ? "active" : ""}" data-profile="all">All Profiles</button>`;
     
-    sortedWinners.forEach(model => {
-        const isActive = selectedFilterModel === model;
-        const geminiClass = isGeminiFamily(model) ? "gemini-pill" : "";
-        pillsHTML += `<button class="pill-btn ${isActive ? "active" : ""} ${geminiClass}" data-model="${model}">${model}</button>`;
+    sortedProfiles.forEach(profile => {
+        const isActive = selectedFilterProfile === profile;
+        pillsHTML += `<button class="pill-btn ${isActive ? "active" : ""}" data-profile="${profile}">${profile}</button>`;
     });
 
     container.innerHTML = pillsHTML;
 
-    // Bind event listeners to new pills
     container.querySelectorAll(".pill-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             container.querySelectorAll(".pill-btn").forEach(p => p.classList.remove("active"));
             btn.classList.add("active");
-            selectedFilterModel = btn.getAttribute("data-model");
+            selectedFilterProfile = btn.getAttribute("data-profile");
             renderMainViews();
         });
     });
 }
 
-// Render both the SaaS Grid View and Detailed Table View
 function renderMainViews() {
     const filtered = getFilteredData();
 
-    // 1. Render SaaS Card Grid
+    // 1. Grid View
     gridPanel.innerHTML = "";
     if (filtered.length === 0) {
         gridPanel.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-secondary);">
                 <i class="fa-regular fa-folder-open" style="font-size: 3rem; margin-bottom: 1rem; display: block; color: var(--color-gpt);"></i>
-                No content types match the selected search or win filters.
+                No content types match the selected filters.
             </div>
         `;
     } else {
@@ -563,41 +410,54 @@ function renderMainViews() {
             card.className = "saas-card fade-in-up";
             card.style.setProperty("--order", index);
 
-            const winnerFamilyClass = isGptFamily(item.winner) ? "badge-gpt" : isGeminiFamily(item.winner) ? "badge-gemini" : "badge-tie";
-            const confClass = `card-confidence-badge conf-${item.confidence.toLowerCase()}`;
+            const engineFamily = getEngineFamily(item.topEngine);
+            const familyClass = `badge-${engineFamily}`;
 
-            let miniBarsHTML = "";
-            const ranks = [item.rank1, item.rank2, item.rank3];
-            ranks.forEach(rank => {
-                if (!rank || rank.model === "N/A") return;
-                const barFillClass = isGptFamily(rank.model) ? "fill-openai" : "fill-gemini";
-                const barColor = isGptFamily(rank.model) ? "var(--color-gpt)" : "var(--color-gemini)";
-                
-                miniBarsHTML += `
-                    <div class="mini-chart-row">
-                        <span class="mini-model-name monospace-font">${rank.model}</span>
-                        <div class="mini-progress-bg">
-                            <div class="mini-progress-fill" style="background-color: ${barColor}" data-width="${rank.score}%"></div>
+            let bucketsHTML = "";
+            if (activeSource === "consensus" && item.routingsByBucket) {
+                const bucketEntries = Object.entries(item.routingsByBucket);
+                bucketEntries.forEach(([bucket, routing]) => {
+                    const bucketFamily = getEngineFamily(routing.engine);
+                    const colorVar = bucketFamily === "gpt" ? "var(--color-gpt)" : 
+                                     bucketFamily === "gemini" ? "var(--color-gemini)" : "#A78BFA";
+                    bucketsHTML += `
+                        <div class="mini-chart-row">
+                            <span class="mini-model-name monospace-font">${bucket}</span>
+                            <div class="mini-progress-bg">
+                                <div class="mini-progress-fill" style="background-color: ${colorVar}" data-width="${routing.score}%"></div>
+                            </div>
+                            <span class="mini-score-val monospace-font">${routing.score}%</span>
                         </div>
-                        <span class="mini-score-val monospace-font">${rank.score}%</span>
+                    `;
+                });
+            } else if (item.bucket) {
+                const colorVar = engineFamily === "gpt" ? "var(--color-gpt)" : 
+                                 engineFamily === "gemini" ? "var(--color-gemini)" : "#A78BFA";
+                bucketsHTML = `
+                    <div class="mini-chart-row">
+                        <span class="mini-model-name monospace-font">${item.bucket}</span>
+                        <div class="mini-progress-bg">
+                            <div class="mini-progress-fill" style="background-color: ${colorVar}" data-width="${item.score}%"></div>
+                        </div>
+                        <span class="mini-score-val monospace-font">${item.score}%</span>
                     </div>
                 `;
-            });
+            }
 
             card.innerHTML = `
                 <div class="card-top-row">
                     <span class="card-category">${item.category}</span>
-                    <span class="glow-winner-badge ${winnerFamilyClass}">${item.winner}</span>
+                    <span class="glow-winner-badge ${familyClass}">${item.topEngine}</span>
                 </div>
                 <div class="card-title-section">
                     <h3 class="card-domain-name">${item.contentType}</h3>
                     <div class="card-metric-block">
-                        <span class="card-score-value monospace-font">${item.rank1.score}%</span>
-                        <span class="${confClass}">${item.confidence}</span>
+                        <span class="card-score-value monospace-font">${item.topScore}%</span>
+                        <span class="card-confidence-badge conf-${item.profile.toLowerCase()}">${item.profile}</span>
                     </div>
                 </div>
                 <div class="card-mini-chart">
-                    ${miniBarsHTML}
+                    ${bucketsHTML}
                 </div>
                 <p class="card-insight-row">${item.rationale}</p>
             `;
@@ -606,13 +466,13 @@ function renderMainViews() {
         });
     }
 
-    // 2. Render Technical Table View
+    // 2. Table View
     tableBody.innerHTML = "";
     if (filtered.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="6" style="text-align: center; padding: 4rem; color: var(--text-secondary);">
-                    No records matches filter conditions.
+                <td colspan="5" style="text-align: center; padding: 4rem; color: var(--text-secondary);">
+                    No records match filter conditions.
                 </td>
             </tr>
         `;
@@ -622,39 +482,40 @@ function renderMainViews() {
             row.className = "fade-in-up";
             row.style.setProperty("--order", index);
 
-            const winnerFamilyClass = isGptFamily(item.winner) ? "badge-gpt" : isGeminiFamily(item.winner) ? "badge-gemini" : "badge-tie";
-            const confClass = `card-confidence-badge conf-${item.confidence.toLowerCase()}`;
+            const engineFamily = getEngineFamily(item.topEngine);
+            const familyClass = `badge-${engineFamily}`;
 
-            // Helper to draw cells
-            const getCellHTML = (rank) => {
-                if (!rank || rank.model === "N/A" || rank.score === 0) {
-                    return `<span style="color: var(--text-dimmed);">N/A</span>`;
-                }
-                const barFillClass = isGptFamily(rank.model) ? "gpt-color" : "gemini-color";
-                return `
-                    <div class="tbl-score-label-row">
-                        <span class="tbl-model-name monospace-font">${rank.model}</span>
-                        <span class="tbl-model-pct monospace-font">${rank.score}%</span>
-                    </div>
-                    <div class="tbl-bar-bg">
-                        <div class="tbl-bar-fill ${barFillClass}" data-width="${rank.score}%"></div>
+            let detailsHTML = "";
+            if (activeSource === "consensus" && item.routingsByBucket) {
+                detailsHTML = `
+                    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; font-size: 0.75rem;">
+                        ${Object.entries(item.routingsByBucket).map(([bucket, routing]) => `
+                            <span style="background: rgba(255, 255, 255, 0.05); padding: 0.2rem 0.5rem; border-radius: 4px;">
+                                ${bucket}: ${routing.engine} (${routing.score}%)
+                            </span>
+                        `).join("")}
                     </div>
                 `;
-            };
+            } else {
+                detailsHTML = `<span style="color: var(--text-secondary);">${item.bucket || "N/A"}</span>`;
+            }
 
             row.innerHTML = `
                 <td>
                     <div class="tbl-domain-name">${item.contentType}</div>
                     <div class="tbl-domain-category">${item.category}</div>
                 </td>
-                <td class="tbl-score-cell">${getCellHTML(item.rank1)}</td>
-                <td class="tbl-score-cell">${getCellHTML(item.rank2)}</td>
-                <td class="tbl-score-cell">${getCellHTML(item.rank3)}</td>
-                <td class="centered"><span class="glow-winner-badge ${winnerFamilyClass}">${item.winner}</span></td>
-                <td class="centered"><span class="${confClass}">${item.confidence}</span></td>
+                <td class="centered"><span class="card-confidence-badge conf-${item.profile.toLowerCase()}">${item.profile}</span></td>
+                <td class="tbl-score-cell">
+                    <div class="tbl-score-label-row">
+                        <span class="tbl-model-name monospace-font">${item.topEngine}</span>
+                        <span class="tbl-model-pct monospace-font">${item.topScore}%</span>
+                    </div>
+                </td>
+                <td class="tbl-score-cell">${detailsHTML}</td>
+                <td class="centered"><span class="glow-winner-badge ${familyClass}">${item.topEngine}</span></td>
             `;
 
-            // Row mouseover tooltips
             row.addEventListener("mouseenter", (e) => triggerTooltip(e, item));
             row.addEventListener("mousemove", moveTooltip);
             row.addEventListener("mouseleave", dismissTooltip);
@@ -663,9 +524,8 @@ function renderMainViews() {
         });
     }
 
-    // Trigger grid progress bar filling width transitions
     setTimeout(() => {
-        const fills = document.querySelectorAll(".mini-progress-fill, .tbl-bar-fill");
+        const fills = document.querySelectorAll(".mini-progress-fill");
         fills.forEach(fill => {
             fill.style.width = fill.getAttribute("data-width");
         });
@@ -673,23 +533,29 @@ function renderMainViews() {
 }
 
 // ==========================================================================
-// 5. TOOLTIP ACTIONS
+// 6. TOOLTIP ACTIONS
 // ==========================================================================
 
 function triggerTooltip(e, item) {
     tooltipText.textContent = item.rationale;
-    tooltipModel.textContent = item.winner;
+    tooltipModel.textContent = item.topEngine;
     
-    if (isGptFamily(item.winner)) {
+    const family = getEngineFamily(item.topEngine);
+    if (family === "gpt") {
         tooltipModel.style.backgroundColor = "var(--color-gpt-bg)";
         tooltipModel.style.color = "#60A5FA";
         tooltipModel.style.border = "1px solid rgba(59, 130, 246, 0.3)";
         hoverTooltip.style.borderColor = "var(--color-gpt)";
-    } else if (isGeminiFamily(item.winner)) {
+    } else if (family === "gemini") {
         tooltipModel.style.backgroundColor = "var(--color-gemini-bg)";
         tooltipModel.style.color = "#34D399";
         tooltipModel.style.border = "1px solid rgba(16, 185, 129, 0.3)";
         hoverTooltip.style.borderColor = "var(--color-gemini)";
+    } else if (family === "deepseek") {
+        tooltipModel.style.backgroundColor = "rgba(139, 92, 246, 0.1)";
+        tooltipModel.style.color = "#A78BFA";
+        tooltipModel.style.border = "1px solid rgba(139, 92, 246, 0.3)";
+        hoverTooltip.style.borderColor = "#A78BFA";
     } else {
         tooltipModel.style.backgroundColor = "var(--color-tie-bg)";
         tooltipModel.style.color = "#9CA3AF";
@@ -707,7 +573,6 @@ function moveTooltip(e) {
     let x = e.clientX + 18;
     let y = e.clientY + 18;
 
-    // Boundary check
     if (x + tooltipWidth > window.innerWidth) {
         x = e.clientX - tooltipWidth - 18;
     }
@@ -724,7 +589,7 @@ function dismissTooltip() {
 }
 
 // ==========================================================================
-// 6. CANVAS DECISIVE CHART DRAWER
+// 7. CANVAS CHART DRAWER
 // ==========================================================================
 
 let canvasAnimFrame = null;
@@ -737,12 +602,10 @@ function renderCanvasChart(progress = 1.0) {
     const w = canvas.width;
     const h = canvas.height;
 
-    // Clear Canvas
     ctx.clearRect(0, 0, w, h);
 
-    // Filter active dataset by Rank 1 score descending (Top 15 decisive domains)
     const sorted = [...activeDataset]
-        .sort((a, b) => b.rank1.score - a.rank1.score)
+        .sort((a, b) => b.topScore - a.topScore)
         .slice(0, 15);
 
     const leftMargin = 220;
@@ -754,7 +617,6 @@ function renderCanvasChart(progress = 1.0) {
     const plotH = h - topMargin - bottomMargin;
     const rowH = plotH / 15;
 
-    // Draw background grid vertical markers
     ctx.strokeStyle = "rgba(255, 255, 255, 0.04)";
     ctx.lineWidth = 1;
     ctx.fillStyle = "rgba(156, 163, 175, 0.4)";
@@ -774,46 +636,26 @@ function renderCanvasChart(progress = 1.0) {
     sorted.forEach((item, index) => {
         const y = topMargin + (index * rowH);
 
-        // Name label
         ctx.fillStyle = "rgba(243, 244, 246, 0.9)";
         ctx.font = "bold 12px sans-serif";
         ctx.textAlign = "right";
         ctx.fillText(item.contentType, leftMargin - 15, y + (rowH / 2) + 4);
 
-        // Grouped bar logic: get maximum score in GPT family and Gemini family
-        let gptScore = 0;
-        let geminiScore = 0;
-
-        [item.rank1, item.rank2, item.rank3].forEach(r => {
-            if (!r || r.model === "N/A") return;
-            if (isGptFamily(r.model)) gptScore = Math.max(gptScore, r.score);
-            if (isGeminiFamily(r.model)) geminiScore = Math.max(geminiScore, r.score);
-        });
-
         const barH = 6;
-        const spacing = 3;
+        const barW = ((item.topScore || 0) / 100) * plotW * progress;
 
-        // Draw GPT bar
-        const gptW = (gptScore / 100) * plotW * progress;
-        ctx.fillStyle = "#3B82F6";
-        ctx.fillRect(leftMargin, y + (rowH / 2) - barH - (spacing / 2), gptW, barH);
+        const profileColor = item.profile === "Quality" ? "#3B82F6" : 
+                            item.profile === "Balanced" ? "#10B981" : "#F59E0B";
+        
+        ctx.fillStyle = profileColor;
+        ctx.fillRect(leftMargin, y + (rowH / 2) - barH / 2, barW, barH);
 
-        // Draw Gemini bar
-        const geminiW = (geminiScore / 100) * plotW * progress;
-        ctx.fillStyle = "#10B981";
-        ctx.fillRect(leftMargin, y + (rowH / 2) + (spacing / 2), geminiW, barH);
-
-        // Draw percentage text metrics
         ctx.font = "bold 9px 'Courier New', Courier, monospace";
         ctx.textAlign = "left";
+        ctx.fillStyle = profileColor;
         
-        if (gptScore > 0) {
-            ctx.fillStyle = "#60A5FA";
-            ctx.fillText(gptScore + "%", leftMargin + gptW + 5, y + (rowH / 2) - 1);
-        }
-        if (geminiScore > 0) {
-            ctx.fillStyle = "#34D399";
-            ctx.fillText(geminiScore + "%", leftMargin + geminiW + 5, y + (rowH / 2) + 7);
+        if ((item.topScore || 0) > 0) {
+            ctx.fillText((item.topScore || 0) + "%", leftMargin + barW + 5, y + (rowH / 2) + 3);
         }
     });
 }
@@ -828,8 +670,6 @@ function triggerCanvasAnimation() {
         if (!start) start = time;
         const elapsed = time - start;
         const progress = Math.min(elapsed / duration, 1.0);
-        
-        // Easing: easeOutCubic
         const ease = 1 - Math.pow(1 - progress, 3);
         
         renderCanvasChart(ease);
@@ -843,7 +683,7 @@ function triggerCanvasAnimation() {
 }
 
 // ==========================================================================
-// 7. VIEW TRANSITIONS & TABS
+// 8. VIEW TRANSITIONS & TABS
 // ==========================================================================
 
 function updateViewport() {
@@ -869,19 +709,14 @@ function setupTabsAndSelectors() {
             tab.classList.add("active");
             positionIndicator(tab);
 
-            // Change Active Source
             activeSource = tab.getAttribute("data-source");
-            activeDataset = pipelineData[activeSource];
-            
-            // Reset filter
-            selectedFilterModel = "all";
+            activeDataset = pipelineData[activeSource] || [];
+            selectedFilterProfile = "all";
 
-            // Trigger updates
             updateViewport();
         });
     });
 
-    // Initialize position
     const activeBtn = document.querySelector(".source-tab-btn.active");
     positionIndicator(activeBtn);
 
@@ -890,7 +725,6 @@ function setupTabsAndSelectors() {
         positionIndicator(btn);
     });
 
-    // View Toggles (Grid vs Table)
     const btnGrid = document.getElementById("btn-grid-view");
     const btnTable = document.getElementById("btn-table-view");
     const gridPanelEl = document.getElementById("grid-view-panel");
@@ -915,7 +749,6 @@ function setupTabsAndSelectors() {
     });
 }
 
-// Set header date dynamically
 function initializeLiveDate() {
     const el = document.getElementById("live-date");
     if (!el) return;
@@ -925,7 +758,6 @@ function initializeLiveDate() {
     el.textContent = dateStr;
 }
 
-// Bind live search text queries
 function setupSearch() {
     searchInput.addEventListener("input", () => {
         renderMainViews();
@@ -933,10 +765,11 @@ function setupSearch() {
 }
 
 // ==========================================================================
-// 8. APP BOOTSTRAPPING
+// 9. APP BOOTSTRAPPING
 // ==========================================================================
+
 window.addEventListener("DOMContentLoaded", () => {
-    processRawData();
+    processRoutingData();
     activeDataset = pipelineData.consensus;
     
     initializeLiveDate();
