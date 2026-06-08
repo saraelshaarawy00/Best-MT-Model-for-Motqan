@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MT Model Suitability Analysis — Arabic Localization</title>
+    <!-- Google Fonts for Modern Tech Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Space Particles / Grid -->
+    <div class="grid-overlay"></div>
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Main Navigation / Header -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="brand-section">
+                <div class="status-pulse-container">
+                    <span class="pulse-dot"></span>
+                    <span class="status-text">LIVE CONSENSUS ENGINE ACTIVE</span>
+                </div>
+                <h1 class="main-title">MT Model Suitability Analysis</h1>
+                <p class="subtitle">Arabic Localization Pipeline Consensus</p>
+            </div>
+            
+            <!-- Source Toggle Navigation -->
+            <div class="source-toggle-wrapper">
+                <nav class="source-toggle" aria-label="Source Dataset Selection">
+                    <button class="toggle-btn active" data-source="consensus">
+                        <i class="fa-solid fa-square-poll-vertical"></i> Consensus View
+                    </button>
+                    <button class="toggle-btn" data-source="claude">
+                        <i class="fa-solid fa-microchip"></i> Claude Sonnet
+                    </button>
+                    <button class="toggle-btn" data-source="chatgpt">
+                        <i class="fa-solid fa-bolt"></i> ChatGPT
+                    </button>
+                    <button class="toggle-btn" data-source="gemini">
+                        <i class="fa-solid fa-brain"></i> Gemini Pro
+                    </button>
+                    <div class="sliding-underline"></div>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Container -->
+    <main class="dashboard-container">
+        <!-- Summary Statistics Row -->
+        <section class="summary-stats-grid" aria-label="Performance Summary Overview">
+            <div class="stat-card fade-in-up" style="--order: 1;">
+                <div class="stat-icon icon-openai"><i class="fa-solid fa-robot"></i></div>
+                <div class="stat-body">
+                    <span class="stat-label">OpenAI GPT-4o Wins</span>
+                    <h2 class="stat-value" id="stat-openai-wins">0</h2>
+                </div>
+                <div class="stat-progress-bg">
+                    <div class="stat-progress-bar bar-openai" id="bar-openai-wins" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card fade-in-up" style="--order: 2;">
+                <div class="stat-icon icon-gemini"><i class="fa-solid fa-sparkles"></i></div>
+                <div class="stat-body">
+                    <span class="stat-label">Gemini 1.5 Pro Wins</span>
+                    <h2 class="stat-value" id="stat-gemini-wins">0</h2>
+                </div>
+                <div class="stat-progress-bg">
+                    <div class="stat-progress-bar bar-gemini" id="bar-gemini-wins" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card fade-in-up" style="--order: 3;">
+                <div class="stat-icon icon-tie"><i class="fa-solid fa-scale-balanced"></i></div>
+                <div class="stat-body">
+                    <span class="stat-label">Parity / Ties</span>
+                    <h2 class="stat-value" id="stat-ties">0</h2>
+                </div>
+                <div class="stat-progress-bg">
+                    <div class="stat-progress-bar bar-tie" id="bar-ties" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card fade-in-up" style="--order: 4;">
+                <div class="stat-icon icon-avg-openai"><i class="fa-solid fa-chart-line-up"></i></div>
+                <div class="stat-body">
+                    <span class="stat-label">Avg OpenAI Score</span>
+                    <h2 class="stat-value" id="stat-openai-avg">0%</h2>
+                </div>
+                <div class="stat-progress-bg">
+                    <div class="stat-progress-bar bar-openai" id="bar-openai-avg" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="stat-card fade-in-up" style="--order: 5;">
+                <div class="stat-icon icon-avg-gemini"><i class="fa-solid fa-chart-line-up"></i></div>
+                <div class="stat-body">
+                    <span class="stat-label">Avg Gemini Score</span>
+                    <h2 class="stat-value" id="stat-gemini-avg">0%</h2>
+                </div>
+                <div class="stat-progress-bg">
+                    <div class="stat-progress-bar bar-gemini" id="bar-gemini-avg" style="width: 0%"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dynamic Content Section -->
+        <div class="dashboard-layout-grid">
+            <!-- Left Panel: Table of Content Types -->
+            <section class="panel table-panel fade-in-up" style="--order: 6;" aria-label="Model Suitability Table">
+                <div class="panel-header">
+                    <h3 class="panel-title"><i class="fa-solid fa-table-list"></i> Domain Performance Breakdown</h3>
+                    <div class="table-actions">
+                        <div class="search-box">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="search-input" placeholder="Search content types...">
+                        </div>
+                        <div class="filter-dropdown-wrapper">
+                            <select id="winner-filter" aria-label="Filter by Winner">
+                                <option value="all">All Winners</option>
+                                <option value="openai">OpenAI Wins</option>
+                                <option value="gemini">Gemini Wins</option>
+                                <option value="tie">Ties</option>
+                            </select>
+                        </div>
+                        <div class="filter-dropdown-wrapper">
+                            <select id="sort-selector" aria-label="Sort Order">
+                                <option value="name">Sort by Name</option>
+                                <option value="openai-desc">OpenAI Score (High-Low)</option>
+                                <option value="gemini-desc">Gemini Score (High-Low)</option>
+                                <option value="gap-desc">Score Gap (High-Low)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-wrapper scrollbar-custom">
+                    <table class="data-table" id="data-table">
+                        <thead>
+                            <tr>
+                                <th>Content Type</th>
+                                <th class="score-col">OpenAI GPT-4o</th>
+                                <th class="score-col">Gemini 1.5 Pro</th>
+                                <th class="badge-col">Winner</th>
+                                <th class="badge-col">Confidence</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Populated dynamically by Javascript -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Right Panel: Data Visualization & Top Gap Chart -->
+            <section class="panel chart-panel fade-in-up" style="--order: 7;" aria-label="Decisive Content Types Visualization">
+                <div class="panel-header">
+                    <h3 class="panel-title"><i class="fa-solid fa-chart-column"></i> Top 10 Most Decisive Domains</h3>
+                    <p class="panel-desc">Sorted by absolute performance score gap (descending)</p>
+                </div>
+                
+                <div class="chart-container-wrapper">
+                    <!-- Pure Dynamic SVG/HTML Horizontal Grouped Bar Chart -->
+                    <div id="decisive-chart-container" class="decisive-chart-container scrollbar-custom">
+                        <!-- Populated dynamically by Javascript -->
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Custom Rationale Drawer / Mobile Tooltip Overlay -->
+    <div class="tooltip-container" id="global-tooltip">
+        <div class="tooltip-header">
+            <span class="tooltip-title">Domain Rationale</span>
+            <span class="tooltip-badge" id="tooltip-winner-badge">OpenAI</span>
+        </div>
+        <div class="tooltip-body" id="tooltip-text">
+            Hover over a content type to view localization details.
+        </div>
+    </div>
+
+    <!-- Application Footer -->
+    <footer class="app-footer fade-in-up" style="--order: 8;">
+        <div class="footer-content">
+            <p>Research compiled from Claude Sonnet, ChatGPT, and Gemini — for internal strategic use</p>
+            <p class="meta-footer">&copy; 2026 Motqan Translation Engineering Pipeline. Confidential CEO Presentation Deck Resource.</p>
+        </div>
+    </footer>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
