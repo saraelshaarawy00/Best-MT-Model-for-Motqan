@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MT Model Intelligence Report — Arabic Localization</title>
+    <title>MT Routing Intelligence Report — Arabic Localization</title>
     <!-- Google Fonts for Modern Typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,10 +21,10 @@
     <header class="sticky-header">
         <div class="header-inner">
             <div class="header-left">
-                <h1 class="header-title">MT Model Intelligence Report</h1>
+                <h1 class="header-title">MT Routing Intelligence Report</h1>
                 <div class="header-subtitle-wrapper">
                     <span class="pulse-dot"></span>
-                    <span class="header-subtitle">Live Analysis &mdash; 39 Content Types &middot; 9 Models &middot; 3 AI Sources</span>
+                    <span class="header-subtitle">Language Bucket × Translation Profile × Engine Routing &middot; 39 Content Types &middot; 4 Language Buckets</span>
                 </div>
             </div>
             <div class="header-right">
@@ -38,65 +38,68 @@
     <!-- Main Container -->
     <main class="dashboard-viewport">
         <!-- Source Toggles Section -->
-        <section class="toggle-section" aria-label="Dataset Source Selection">
+        <section class="toggle-section" aria-label="Routing Scenario Selection">
             <nav class="source-nav" id="source-tabs">
                 <button class="source-tab-btn active" data-source="consensus">
-                    <i class="fa-solid fa-layer-group"></i> Consensus View
+                    <i class="fa-solid fa-layer-group"></i> Consensus (All Buckets)
                 </button>
-                <button class="source-tab-btn" data-source="claude">
-                    <i class="fa-solid fa-brain"></i> Claude Source
+                <button class="source-tab-btn" data-source="RTL">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> RTL Languages
                 </button>
-                <button class="source-tab-btn" data-source="chatgpt">
-                    <i class="fa-solid fa-bolt"></i> ChatGPT Source
+                <button class="source-tab-btn" data-source="CJK">
+                    <i class="fa-solid fa-language"></i> CJK Languages
                 </button>
-                <button class="source-tab-btn" data-source="gemini">
-                    <i class="fa-solid fa-sparkles"></i> Gemini Source
+                <button class="source-tab-btn" data-source="European">
+                    <i class="fa-solid fa-globe"></i> European Languages
+                </button>
+                <button class="source-tab-btn" data-source="Others">
+                    <i class="fa-solid fa-ellipsis"></i> Other Languages
                 </button>
                 <div class="tab-sliding-indicator"></div>
             </nav>
         </section>
 
         <!-- KPI Strip (5 metric cards) -->
-        <section class="kpi-strip" aria-label="Performance Metrics Summary">
+        <section class="kpi-strip" aria-label="Routing Metrics Summary">
             <div class="kpi-card fade-in-up" style="--order: 1;">
                 <div class="kpi-header">
-                    <span class="kpi-title">GPT Family Wins</span>
-                    <span class="kpi-badge gpt-accent"><i class="fa-solid fa-robot"></i></span>
+                    <span class="kpi-title">Quality Profile Count</span>
+                    <span class="kpi-badge gpt-accent"><i class="fa-solid fa-crown"></i></span>
                 </div>
                 <h2 class="kpi-value gpt-text" id="kpi-gpt-wins">0</h2>
-                <div class="kpi-subtext">Out of 39 Domains</div>
+                <div class="kpi-subtext">Maximum Accuracy Routing</div>
             </div>
             <div class="kpi-card fade-in-up" style="--order: 2;">
                 <div class="kpi-header">
-                    <span class="kpi-title">Gemini Family Wins</span>
-                    <span class="kpi-badge gemini-accent"><i class="fa-solid fa-gem"></i></span>
+                    <span class="kpi-title">Balanced Profile Count</span>
+                    <span class="kpi-badge gemini-accent"><i class="fa-solid fa-scale-balanced"></i></span>
                 </div>
                 <h2 class="kpi-value gemini-text" id="kpi-gemini-wins">0</h2>
-                <div class="kpi-subtext">Out of 39 Domains</div>
+                <div class="kpi-subtext">Speed ↔ Quality Balance</div>
             </div>
             <div class="kpi-card fade-in-up" style="--order: 3;">
                 <div class="kpi-header">
-                    <span class="kpi-title">Dominant Model</span>
-                    <span class="kpi-badge dominant-accent"><i class="fa-solid fa-trophy"></i></span>
+                    <span class="kpi-title">Top Routing Engine</span>
+                    <span class="kpi-badge dominant-accent"><i class="fa-solid fa-rocket"></i></span>
                 </div>
                 <h2 class="kpi-value monospace-font" id="kpi-dominant-model">N/A</h2>
-                <div class="kpi-subtext">Highest Win Count</div>
+                <div class="kpi-subtext">Highest Score Match</div>
             </div>
             <div class="kpi-card fade-in-up" style="--order: 4;">
                 <div class="kpi-header">
-                    <span class="kpi-title">Max Confidence Score</span>
+                    <span class="kpi-title">Max Routing Score</span>
                     <span class="kpi-badge max-score-accent"><i class="fa-solid fa-gauge-high"></i></span>
                 </div>
                 <h2 class="kpi-value monospace-font" id="kpi-max-score">0%</h2>
-                <div class="kpi-subtext">Peak Localized Performance</div>
+                <div class="kpi-subtext">Peak Routing Confidence</div>
             </div>
             <div class="kpi-card fade-in-up" style="--order: 5;">
                 <div class="kpi-header">
-                    <span class="kpi-title">Average Leader Score</span>
+                    <span class="kpi-title">Average Routing Score</span>
                     <span class="kpi-badge avg-accent"><i class="fa-solid fa-chart-line"></i></span>
                 </div>
                 <h2 class="kpi-value monospace-font" id="kpi-avg-score">0%</h2>
-                <div class="kpi-subtext">Across All 39 Domains</div>
+                <div class="kpi-subtext">Across All Content Types</div>
             </div>
         </section>
 
@@ -114,17 +117,17 @@
                     <button class="view-toggle-btn active" id="btn-grid-view" title="Grid of Visual Cards">
                         <i class="fa-solid fa-grip"></i> SaaS Grid View
                     </button>
-                    <button class="view-toggle-btn" id="btn-table-view" title="Detailed Comparison Table">
-                        <i class="fa-solid fa-list-check"></i> Technical Table View
+                    <button class="view-toggle-btn" id="btn-table-view" title="Detailed Routing Table">
+                        <i class="fa-solid fa-list-check"></i> Routing Table View
                     </button>
                 </div>
             </div>
 
-            <!-- Model Filters Header -->
+            <!-- Profile Filters Header -->
             <div class="controls-right">
-                <span class="filter-label"><i class="fa-solid fa-filter"></i> Win Filter:</span>
+                <span class="filter-label"><i class="fa-solid fa-filter"></i> Profile Filter:</span>
                 <div class="filter-pills-container scrollbar-custom" id="model-filter-pills">
-                    <button class="pill-btn active" data-model="all">All Models</button>
+                    <button class="pill-btn active" data-profile="all">All Profiles</button>
                     <!-- Filled by script.js -->
                 </div>
             </div>
@@ -145,11 +148,10 @@
                             <thead>
                                 <tr>
                                     <th>Content Type</th>
-                                    <th>Rank 1 Model &amp; Score</th>
-                                    <th>Rank 2 Model &amp; Score</th>
-                                    <th>Rank 3 Model &amp; Score</th>
-                                    <th class="centered">Winner Badge</th>
-                                    <th class="centered">Confidence</th>
+                                    <th>Translation Profile</th>
+                                    <th>Routed Engine</th>
+                                    <th>Language Bucket Routing</th>
+                                    <th class="centered">Engine Badge</th>
                                 </tr>
                             </thead>
                             <tbody id="table-body">
@@ -167,8 +169,8 @@
             <section class="panel chart-panel fade-in-up" style="--order: 7;">
                 <div class="chart-header">
                     <div>
-                        <h3 class="panel-heading"><i class="fa-solid fa-chart-bar"></i> Top 15 Most Decisive Localization Domains</h3>
-                        <p class="panel-description">Comparing top GPT vs top Gemini scores sorted by leader performance (descending)</p>
+                        <h3 class="panel-heading"><i class="fa-solid fa-chart-bar"></i> Top 15 Routing Decisions by Confidence</h3>
+                        <p class="panel-description">Content types ranked by engine routing score across translation profiles</p>
                     </div>
                 </div>
                 <div class="canvas-wrapper">
@@ -179,29 +181,26 @@
 
             <!-- Model Legend Panel -->
             <section class="panel legend-panel fade-in-up" style="--order: 8;">
-                <h3 class="panel-heading"><i class="fa-solid fa-circle-info"></i> Pipeline Model Catalog</h3>
-                <p class="panel-description">Classification of the 9 evaluated translation models</p>
+                <h3 class="panel-heading"><i class="fa-solid fa-circle-info"></i> Routing Architecture</h3>
+                <p class="panel-description">Translation Profiles & Engine Families</p>
                 
                 <div class="legend-grid">
-                    <!-- GPT Family Column -->
+                    <!-- Translation Profiles Column -->
                     <div class="legend-col">
-                        <h4 class="legend-col-title gpt-text"><i class="fa-solid fa-robot"></i> GPT Model Family</h4>
+                        <h4 class="legend-col-title gpt-text"><i class="fa-solid fa-sliders"></i> Translation Profiles</h4>
                         <ul class="legend-list">
-                            <li><span class="swatch gpt-color"></span> <span class="monospace-font">GPT-5.5 Pro</span></li>
-                            <li><span class="swatch gpt-color"></span> <span class="monospace-font">GPT-5.5</span></li>
-                            <li><span class="swatch gpt-color"></span> <span class="monospace-font">GPT-5.4</span></li>
-                            <li><span class="swatch gpt-color"></span> <span class="monospace-font">GPT-5.4 Mini</span></li>
-                            <li><span class="swatch gpt-color"></span> <span class="monospace-font">GPT-5.4 Nano</span></li>
-                            <li><span class="swatch gpt-color"></span> <span class="monospace-font">GPT-5 Mini</span></li>
+                            <li><span class="swatch" style="background: #3B82F6;"></span> <span class="monospace-font">Quality</span> — Maximum Accuracy</li>
+                            <li><span class="swatch" style="background: #10B981;"></span> <span class="monospace-font">Balanced</span> — Speed ↔ Quality</li>
+                            <li><span class="swatch" style="background: #F59E0B;"></span> <span class="monospace-font">Speed</span> — Fast Turnaround</li>
                         </ul>
                     </div>
-                    <!-- Gemini Family Column -->
+                    <!-- Engine Families Column -->
                     <div class="legend-col">
-                        <h4 class="legend-col-title gemini-text"><i class="fa-solid fa-gem"></i> Gemini Model Family</h4>
+                        <h4 class="legend-col-title gemini-text"><i class="fa-solid fa-microchip"></i> Engine Families</h4>
                         <ul class="legend-list">
-                            <li><span class="swatch gemini-color"></span> <span class="monospace-font">Gemini 3.1 Pro</span></li>
-                            <li><span class="swatch gemini-color"></span> <span class="monospace-font">Gemini 3 Flash</span></li>
-                            <li><span class="swatch gemini-color"></span> <span class="monospace-font">Gemini 3.1 Flash Lite</span></li>
+                            <li><span class="swatch" style="background: #60A5FA;"></span> <span class="monospace-font">GPT</span> — OpenAI Models</li>
+                            <li><span class="swatch" style="background: #34D399;"></span> <span class="monospace-font">Gemini</span> — Google Generative AI</li>
+                            <li><span class="swatch" style="background: #A78BFA;"></span> <span class="monospace-font">DeepSeek</span> — DeepSeek Premium</li>
                         </ul>
                     </div>
                 </div>
@@ -212,8 +211,8 @@
     <!-- Custom Hover Tooltip -->
     <div class="hover-tooltip" id="table-hover-tooltip">
         <div class="tooltip-title-row">
-            <span class="tooltip-header-text">Arabic Localization Insight</span>
-            <span class="tooltip-model-winner" id="tooltip-model">Winner</span>
+            <span class="tooltip-header-text">Routing Decision</span>
+            <span class="tooltip-model-winner" id="tooltip-model">Engine</span>
         </div>
         <p class="tooltip-desc" id="tooltip-desc-text">Hover details go here.</p>
     </div>
@@ -221,7 +220,7 @@
     <!-- C-Suite Footer -->
     <footer class="ceo-footer">
         <div class="footer-inner">
-            <p class="footer-text">Research compiled from Claude Sonnet, ChatGPT-5.5, and Gemini 3.1 — Motqan AI · Internal Strategic Use Only</p>
+            <p class="footer-text">MT Routing Engine powered by Content Type → Translation Profile → Language Bucket Architecture — Motqan AI · Internal Strategic Use Only</p>
             <p class="footer-subtext">&copy; 2026 Motqan Translation Engineering. All Rights Reserved.</p>
         </div>
     </footer>
